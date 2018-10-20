@@ -1,4 +1,4 @@
-# aita-ml-retentioneering-python
+# retentioneering-framework
 Tools for user trajectories analysis in the app (python package)
 
 ## installation
