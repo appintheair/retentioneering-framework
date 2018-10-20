@@ -1,0 +1,60 @@
+{
+  "settings": {
+    "service_account_path": "../credentials.json",
+    "project": "project"
+  },
+  "sql": {
+    "deleted": {
+      "user_filters": {
+        "event_names": [
+          "settings_delete_account_success"
+        ],
+        "date_start": "2018-10-01",
+        "date_finish": "2018-10-15"
+      },
+      "event_filters": {
+        "date_start": "2018-10-01",
+        "date_finish": "2018-10-15",
+        "use_last_events": true,
+        "app_version": "7.4.2"
+      },
+      "drop_duplicates_events": [
+        "user_pseudo_id",
+        "event_name",
+        "event_timestamp"
+      ],
+      "destination_table": {
+        "dataset": "alexk",
+        "table": "BigGraph_del"
+      }
+    },
+    "test_group": {
+      "user_filters": {
+        "event_names": [
+          "first_open"
+        ],
+        "limit": 2500,
+        "date_start": "2018-10-01",
+        "date_finish": "2018-10-15",
+        "app_version": "7.4.2"
+      },
+      "event_filters": {
+        "date_start": "2018-10-01",
+        "date_finish": "2018-10-15",
+        "app_version": "7.4.2"
+      },
+      "drop_duplicates_events": [
+        "user_pseudo_id",
+        "event_name",
+        "event_timestamp"
+      ],
+      "destination_table": {
+        "dataset": "alexk",
+        "table": "BigGraph_test"
+      }
+    }
+  },
+  "events": {
+    "duplicate_thr_time": 100
+  }
+}
