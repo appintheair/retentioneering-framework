@@ -27,3 +27,15 @@ sudo python setup.py install
   }
 ```
 - Now you are ready to do [examples](tests).
+## Analysis
+You can use retentioneering.analysis toolset with your data.
+Data should have at least three columns `event_name`, `user_pseudo_id`, `event_timestamp`. You can give empty dict as settings.
+
+```python
+import pandas as pd
+from retentioneering import analysis
+# your data import
+df = pd.read_csv('path to your data')
+settings = dict()
+analysis.get_desc_table(df, settings=settings)
+```
