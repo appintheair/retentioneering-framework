@@ -38,7 +38,7 @@ def api_plot(export_folder, graph_name, set_name, plot_type='lost', download_pat
     if not download_path:
         download_path = export_folder
 
-    url = 'http://localhost:5001/'
+    url = 'http://35.230.23.217:5001/'
     files = {
         'graph': ('graph.csv', open(os.path.join(export_folder, graph_name), 'rb'), 'multipart/form-data'),
         'settings': ('settings.json', open(os.path.join(export_folder, set_name), 'rb'), 'multipart/form-data')}
