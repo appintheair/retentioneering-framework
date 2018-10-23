@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 from retentioneering.analysis.utils import get_shift, get_all_agg, check_folder
 import requests
-from wand.image import Image as WImage
+# from wand.image import Image as WImage
 from IPython.core.display import HTML
 
 
@@ -27,11 +27,11 @@ def plot_graph_api(df, settings, users='all', task='lost', order='all', treshold
     api_plot(export_folder, graph_name, set_name, plot_type=task)
     path = os.path.join(export_folder, 'graph_plot.pdf')
     display(HTML("<a href='{href}'> {href} </a>".format(href=path)))
-    try:
-        img = WImage(filename=path)
-        return img
-    except:
-        print("Please check on path behind")
+    # try:
+    #     img = WImage(filename=path)
+    #     return img
+    # except:
+    print("Please check on path behind")
 
 
 def api_plot(export_folder, graph_name, set_name, plot_type='lost', download_path=None):
