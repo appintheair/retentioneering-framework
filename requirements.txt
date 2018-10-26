@@ -14,6 +14,7 @@ idna==2.7
 kiwisolver==1.0.1
 matplotlib==2.2.3
 MulticoreTSNE==0.0.1.1
+networkx==2.2
 numpy==1.14.4
 pandas==0.23.1
 plotly==3.3.0
