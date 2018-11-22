@@ -15,7 +15,8 @@ setup(
         'plotly>=3.3.0',
         'MulticoreTSNE>=0.0.1.1',
         'Wand>=0.4.4',
-        'networkx>=2.2'
+        'networkx>=2.2',
+        'PyYAML>=3.13'
     ],
     packages=find_packages()
 )

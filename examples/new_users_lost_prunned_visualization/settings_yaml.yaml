@@ -1,0 +1,111 @@
+---
+settings:
+  # path to bigquery credentials
+  service_account_path: "../../../credentials"
+  # name of bigquery project
+  project: 
+
+# filter for user for preprocessing
+users:
+ # only users that have such parameters are allowed
+  filters:
+   # parameters from BQ table to filter the data 
+  - event_name: welcome_see_screen
+    event_params_value_string_value: '1'
+# filter for preprocessing user events received from BQ
+events:
+  # criterion for users to pass
+  filters:
+  - event_name: screen_view
+    not: true
+  - event_params_value_string_value: myFlights
+  duplicate_thr_time: 100
+# parameters of sql request
+sql:
+  query_1:
+    # parameters of sql request for users
+    user_filters:
+      # select users only with such events
+      event_names:
+      - first_open
+      # users with such app_version
+      app_version: 7.4.2
+      # start data of first user appereance
+      date_start: '2018-10-01'
+      # last data of first user appereance
+      date_finish: '2018-10-01'
+    # select only such events for users
+    event_filters:
+      # events starting from such data
+      date_start: '2018-10-01'
+      # events ending at such data
+      date_finish: '2018-10-01'
+      # events ending at such data
+      event_names:
+      - screen_view
+      - myFlights_add
+      - myFlights_edit
+      - myFlights_refresh
+      - profile_edit_close
+      - tabbar_select_page
+      - welcome_see_screen
+      - feed_widget_present
+      - welcome_login_google
+      - welcome_login_tripit
+      - welcome__loginFailure
+      - feed_ad_canBePresented
+      - myFlights_connectEmail
+      - myFlights_swipe_action
+      - newFlight_myflights_see
+      - welcome__chooseLoginType
+      - welcome_otherLogin__show
+      - newFlight_awardwallet_see
+      - welcome_otherLogin__close
+      - welcome_login_google_cancel
+      - welcome_privacy_policyShown
+      - welcome_privacy_policyShown
+      - welcome_privacy_policyDecline
+      - welcome_privacy_policyDecline
+      - welcome_privacy_policyAccepted
+      - welcome_privacy_policyAccepted
+      - welcome_privacy_policyTapToPolicy
+      - feed_widget_aircraft_amenities_saw
+      - welcome_otherLogin__chooseLoginType
+      - feed_widget_aircraft_noAircraftImage
+      - welcome_otherLogin_privacy_policyShown
+      - welcome_otherLogin_privacy_policyShown
+      - welcome_otherLogin_privacy_policyDecline
+      - welcome_otherLogin_privacy_policyDecline
+      - welcome_otherLogin_privacy_policyAccepted
+      # number of event which are taking from the table
+      count_events: 40
+    # list of columns in bigquery table which are used to drop duplicates
+    drop_duplicates_events:
+    - user_pseudo_id
+    - event_name
+    - event_params_value_string_value
+    - event_timestamp
+    # dataset and table to write received deleted data
+    destination_table:
+      dataset: alexk
+      table: BigGraph4
+# parameters to select positive elements group
+positive_event:
+  # group name
+  name: passed
+  # filters for events
+  filters:
+  # split events by separator "sep" and check if the first part satisfy "values"
+    match_up_to_separator:
+      values:
+      - newFlight
+      - feed
+      - tabbar
+      - myFlights
+      sep: _
+    # filters for events that are in full_match
+    full_match:
+    - screen_view
+negative_event:
+  # group name
+  name: lost

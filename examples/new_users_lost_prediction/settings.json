@@ -1,7 +1,7 @@
 {
   "settings": {
-    "service_account_path": "../credentials.json",
-    "project": "project"
+    "service_account_path": "../../credentials",
+    "project":
   },
   "users": {
     "filters": [

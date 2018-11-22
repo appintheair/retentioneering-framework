@@ -66,16 +66,24 @@ def prepare_drop_duplicates_flag(drop_duplicates=None):
     return res
 
 
-def download_events_multi(client, job_config, settings=None, **kwargs):
+def download_events_multi(client, job_config, settings=None, return_only_query=False, **kwargs):
     df = pd.DataFrame()
+    res = []
     if settings is not None:
         for settings_name, settings_config in settings['sql'].items():
-            job_config.write_disposition = "WRITE_TRUNCATE"
-            job_config.destination = client.dataset(settings_config['destination_table']['dataset']) \
-                .table(settings_config['destination_table']['table'])
-            df = df.append(
-                download_events(client=client, job_config=job_config, return_dataframe=True,
-                                settings=settings_config, group_name=settings_name, **kwargs), sort=False)
+            if return_only_query:
+                res.append(download_events(client=client, job_config=job_config, return_dataframe=True,
+                                           settings=settings_config, group_name=settings_name, 
+                                           return_only_query=return_only_query, **kwargs))
+            else:
+                job_config.write_disposition = "WRITE_TRUNCATE"
+                job_config.destination = client.dataset(settings_config['destination_table']['dataset']) \
+                    .table(settings_config['destination_table']['table'])
+                df = df.append(
+                    download_events(client=client, job_config=job_config, return_dataframe=True,
+                                    settings=settings_config, group_name=settings_name, **kwargs), sort=False)
+    if return_only_query:
+        return res
     return df
 
 

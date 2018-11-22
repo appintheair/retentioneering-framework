@@ -68,7 +68,7 @@ class Model:
 
     def _prepare_dataset(self, df, target_event, event_filter=None, n_start_events=None):
         if event_filter is not None:
-            df = df[~df.event_name.isin(event_filter)]
+            df = df[df.event_name.isin(event_filter)]
         df = df.sort_values('event_timestamp')
         train = df.groupby('user_pseudo_id').event_name.agg(str_agg)
         train = train.reset_index(None)

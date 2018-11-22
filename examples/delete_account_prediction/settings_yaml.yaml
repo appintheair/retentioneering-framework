@@ -1,0 +1,72 @@
+---
+settings:
+  # path to bigquery credentials
+  service_account_path: "../../../credentials"
+  # name of bigquery project
+  project: 
+
+# parameters of sql request
+sql:
+  # parameters of deleted group users
+  deleted:
+    # criteria to select users
+    user_filters:
+      # event with event_name as a criterion for belonging to a group deleted
+      event_names:
+      - settings_delete_account_success
+      # start data of first user appereance
+      date_start: '2018-10-01'
+      # last data of first user appereance
+      date_finish: '2018-10-15'
+    # parameters for event filters 
+    event_filters:
+      # start-stop of events belonging to user
+      date_start: '2018-10-01'
+      date_finish: '2018-10-15'
+      # if true take total count_events events from the end
+      use_last_events: true
+      # number of events per user
+      count_events: 0
+      # app version number
+      app_version: 7.4.2
+    # list of columns in bigquery table which are used to drop duplicates
+    drop_duplicates_events:
+    - user_pseudo_id
+    - event_name
+    - event_timestamp
+    destination_table:
+    # dataset and table to write received deleted data
+      dataset: alexk
+      table: BigGraph_del
+  # parametrs of test group users
+  test_group:
+    # parameters of users filters
+    user_filters:
+      # event_name as a criterion for belonging to a test group
+      event_names:
+      - first_open
+      # limit to a number of users in request
+      limit: 2500
+      # start-stop which belongs to user
+      date_start: '2018-10-01'
+      date_finish: '2018-10-15'
+      # number of app_version for the new users 
+      app_version: 7.4.2
+    event_filters:
+      # start-stop of events belonging to user
+      date_start: '2018-10-01'
+      date_finish: '2018-10-15'
+      # number of app_version for events we are looking
+      app_version: 7.4.2
+    # list of columns in bigquery table which are used to drop duplicates
+    drop_duplicates_events:
+    - user_pseudo_id
+    - event_name
+    - event_timestamp
+    # dataset and table to write the received test group data
+    destination_table:
+      dataset: alexk
+      table: BigGraph_test
+events:
+  # time between events when they are considered to be the same
+  duplicate_thr_time: 100

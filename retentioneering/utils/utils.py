@@ -1,19 +1,20 @@
 import json
+import yaml
 from google.cloud import bigquery
 
 
+
 class Config(dict):
-    def __init__(self, filename):
+    def __init__(self, filename, is_json=False):
         with open(filename, 'rb') as f:
-            super(Config, self).__init__(json.load(f))
+            super(Config, self).__init__(json.load(f)) if is_json else super(Config, self).__init__(yaml.load(f))
 
-    def export(self, filename):
+    def export(self, filename, is_json=False):
         with open(filename, 'wb') as f:
-            json.dump(self, f)
+            json.dump(self, f) if is_json else yaml.dump(self, f)
 
-
-def init_from_json(filename):
-    settings = Config(filename)
+def init_from_file(filename, is_json=False):
+    settings = Config(filename, is_json=is_json)
     client = bigquery.Client.from_service_account_json(
         settings['settings']['service_account_path'],
         project=settings['settings']['project'])
