@@ -14,7 +14,6 @@ setup(
         'google-cloud-bigquery>=1.6.0',
         'plotly>=3.3.0',
         'MulticoreTSNE>=0.0.1.1',
-        'Wand>=0.4.4',
         'networkx>=2.2',
         'PyYAML>=3.13'
     ],

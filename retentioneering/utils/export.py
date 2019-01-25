@@ -3,7 +3,6 @@ from datetime import datetime
 import os
 from retentioneering.analysis.utils import get_shift, get_all_agg, check_folder
 import requests
-# from wand.image import Image as WImage
 from IPython.core.display import HTML
 
 
