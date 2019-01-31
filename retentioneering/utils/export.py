@@ -3,7 +3,6 @@ from datetime import datetime
 import os
 from retentioneering.analysis.utils import get_shift, get_all_agg, check_folder
 import requests
-# from wand.image import Image as WImage
 from IPython.core.display import HTML
 
 
@@ -47,7 +46,7 @@ def api_plot(export_folder, graph_name, set_name, plot_type='lost', download_pat
     if r.content == 'File was not proceed':
         print("Can't plot graph for this data")
     else:
-        with open(os.path.join(download_path, 'graph_plot.pdf'), 'w') as f:
+        with open(os.path.join(download_path, 'graph_plot.pdf'), 'wb') as f:
             f.write(r.content)
 
 
