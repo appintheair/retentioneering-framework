@@ -25,22 +25,21 @@ sql:
   query_1:
     # parameters of sql request for users
     user_filters:
-      # select users only with such events
+      # select only users with such events
       event_names:
       - first_open
-      # users with such app_version
+      # select only users with such app_version
       app_version: 7.4.2
-      # start data of first user appereance
+      # first date of first user appearance
       date_start: '2018-10-01'
-      # last data of first user appereance
+      # last date of first user appearance
       date_finish: '2018-10-01'
     # select only such events for users
     event_filters:
-      # events starting from such data
+      # select only events between those dates
       date_start: '2018-10-01'
-      # events ending at such data
       date_finish: '2018-10-01'
-      # events ending at such data
+      # select only such events
       event_names:
       - screen_view
       - myFlights_add

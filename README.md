@@ -2,6 +2,45 @@
 Tools for user trajectories analysis in the app (python package)
 
 ## installation
+
+Fistly you need to download c++ compiler
+
+### Mac
+
+Install [homebrew](https://brew.sh/)
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+Then you should install gcc
+
+```bash
+brew install gcc
+```
+
+You also need python if you haven't it
+
+```bash
+brew install python3
+```
+
+And git
+
+```bash
+brew install git
+```
+
+### Windows
+
+Install [Microsoft Visual Studio Build tools](https://visualstudio.microsoft.com/ru/downloads/). You can find it at `Инструменты для Visual Studio 2017 > Build Tools для Visual Studio 2017`.
+
+If you need python then install it from [here](https://www.python.org/downloads/release/python-368/). Please, be sure that you select `Add python to path` in the bottom of installer.
+
+And git from [here](https://git-scm.com/downloads).
+
+### Python package
+
 - To install Python package from github, you need to clone that repository.
 ```bash
 git clone git@github.com:appintheair/aita-ml-retentioneering-python.git
@@ -14,9 +53,17 @@ git clone https://github.com/appintheair/aita-ml-retentioneering-python.git
 ```bash 
 sudo pip install -r requirements.txt
 ```
+or if previous command don't work
+```bash 
+sudo pip3 install -r requirements.txt
+```
 - Then just run the setup.py file from that directory
 ```bash
 sudo python setup.py install
+```
+or if previous command don't work
+```bash
+sudo python3 setup.py install
 ```
 ## First steps
 - Put path to your google cloud credentials and your project name in settings yaml ([example](examples/new_users_lost_prediction/settings_yaml.yaml)).
@@ -39,7 +86,7 @@ You can use retentioneering.analysis toolset with your data.
 
 Data should have at least three columns `event_name`, `user_pseudo_id`, `event_timestamp`.
 
-You can put empty dict as settings.
+You can put empty dict as `settings` for analysis. It is needed here only to set experiment folder. By default it will be `experiments` folder in you current directory. For each new experiment (kernel restart) new folder with experiment results named with current datetime will be created.
 
 ```python
 import pandas as pd
