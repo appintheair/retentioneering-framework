@@ -14,13 +14,13 @@ sql:
       # event with event_name as a criterion for belonging to a group deleted
       event_names:
       - settings_delete_account_success
-      # start data of first user appereance
+      # first date of first user appearance
       date_start: '2018-10-01'
-      # last data of first user appereance
+      # last date of first user appearance
       date_finish: '2018-10-15'
     # parameters for event filters 
     event_filters:
-      # start-stop of events belonging to user
+      # first-last date of events belonging to user
       date_start: '2018-10-01'
       date_finish: '2018-10-15'
       # if true take total count_events events from the end
@@ -47,13 +47,13 @@ sql:
       - first_open
       # limit to a number of users in request
       limit: 2500
-      # start-stop which belongs to user
+      # first-last date which belongs to user
       date_start: '2018-10-01'
       date_finish: '2018-10-15'
       # number of app_version for the new users 
       app_version: 7.4.2
     event_filters:
-      # start-stop of events belonging to user
+      # first-last of events belonging to user
       date_start: '2018-10-01'
       date_finish: '2018-10-15'
       # number of app_version for events we are looking

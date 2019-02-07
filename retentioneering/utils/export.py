@@ -1,12 +1,13 @@
 import json
 from datetime import datetime
 import os
-from retentioneering.analysis.utils import get_shift, get_all_agg, check_folder
+from retentioneering.analysis.utils import get_shift, get_all_agg, _check_folder
 import requests
-from IPython.core.display import HTML
+from IPython.display import HTML, display
+import warnings
 
 
-def get_session(df, order='all', treshold=0.5):
+def _get_session(df, order='all', treshold=0.5):
     df = get_shift(df)
     if order == 'all':
         return df
@@ -21,9 +22,10 @@ def get_session(df, order='all', treshold=0.5):
 
 def plot_graph_api(df, settings, users='all', task='lost', order='all', treshold=0.5,
                   start_event=None, end_event=None):
+    warnings.warn('Please use retentioneering.visualization.plot_graph_api instead')
     export_folder, graph_name, set_name = export_tracks(df, settings, users, task, order, treshold,
                                                         start_event, end_event)
-    api_plot(export_folder, graph_name, set_name, plot_type=task)
+    _api_plot(export_folder, graph_name, set_name, plot_type=task)
     path = os.path.join(export_folder, 'graph_plot.pdf')
     display(HTML("<a href='{href}'> {href} </a>".format(href=path)))
     # try:
@@ -33,7 +35,7 @@ def plot_graph_api(df, settings, users='all', task='lost', order='all', treshold
     print("Please check on path behind")
 
 
-def api_plot(export_folder, graph_name, set_name, plot_type='lost', download_path=None):
+def _api_plot(export_folder, graph_name, set_name, plot_type='lost', download_path=None):
     if not download_path:
         download_path = export_folder
 
@@ -52,7 +54,30 @@ def api_plot(export_folder, graph_name, set_name, plot_type='lost', download_pat
 
 def export_tracks(df, settings, users='all', task='lost', order='all', treshold=0.5,
                   start_event=None, end_event=None):
-    settings = check_folder(settings)
+    """
+    Visualize trajectories from event clickstream (with Mathematica)
+
+    :param df: event clickstream
+    :param settings: experiment config (can be empty dict here)
+    :param users: `all` or list of user ids to plot specific group
+    :param task: type of task for different visualization (can be `lost` or `prunned_welcome`)
+    :param order: depth in sessions for filtering
+    :param threshold: threshold for session splitting
+    :param start_event: name of start event in trajectory
+    :param end_event: name of last event in trajectory
+
+    :param df: pd.DataFrame
+    :param settings: dict
+    :param users: str or list
+    :param task: str
+    :param order: int
+    :param threshold: float
+    :param start_event: str
+    :param end_event: str
+
+    :return: None
+    """
+    settings = _check_folder(settings)
     export_folder = settings['export_folder']
     if task == 'lost' and start_event is None:
         settings['start_event'] = 'welcome_see_screen'
@@ -74,7 +99,7 @@ def export_tracks(df, settings, users='all', task='lost', order='all', treshold=
             settings['users'] = {}
         settings['users']['userlist'] = 'all'
 
-    df = get_session(df, order=order, treshold=treshold)
+    df = _get_session(df, order=order, treshold=treshold)
     if settings.get('events') is None:
         settings['events'] = {}
     settings['events']['session_order'] = order

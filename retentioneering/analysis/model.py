@@ -8,15 +8,25 @@ import os
 import plotly.offline as py
 import plotly.graph_objs as go
 from datetime import datetime
-from retentioneering.analysis.utils import check_folder, get_all_agg, plot_graph_python
+from retentioneering.analysis.utils import _check_folder, get_all_agg, plot_graph_python
 import pandas as pd
 
 
-def str_agg(x):
+def _str_agg(x):
     return ' '.join(x)
 
 
 def create_filter(data, n_folds=None):
+    """
+    Creates interested events filter with histogram
+
+    :param data: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
+            `event_timestamp` and `user_pseudo_id`
+    :param n_folds: number of folds in histogram (it affects how far technical events should be from users` events)
+    :type data: pd.DataFrame
+    :type n_folds: int
+    :return: set
+    """
     all_events = set(data.event_name)
     x = data.groupby('event_name').user_pseudo_id.count()
     if n_folds is None:
@@ -30,9 +40,40 @@ def create_filter(data, n_folds=None):
 
 
 class Model:
+    """
+    Base model for classification
+    """
     def __init__(self, data, target_event, settings, event_filter=None,
                  n_start_events=None, emb_type='tf-idf', ngram_range=(1, 3),
                  emb_dims=None, embedder=None):
+        """
+        Inits users classifier
+
+        :param data: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
+            `event_timestamp` and `user_pseudo_id`
+        :param target_event: name of event which signalize target function
+            (e.g. for prediction of lost users it'll be `lost`)
+        :param settings: experiment config (can be empty dict here)
+        :param event_filter: list of events that is wanted to use in analysis
+        :param n_start_events: length of users trajectory from start
+        :param emb_type: type of embedding (now only `tf-idf` is supported)
+        :param ngram_range:
+            The lower and upper boundary of the range of n-values for different
+            n-grams to be extracted. All values of n such that min_n <= n <= max_n
+            will be used.
+        :param emb_dims: it is needed only when use emb_type different from `tf-idf`
+        :param embedder: pretrained model for event embedding (now only `tf-idf` is supported)
+
+        :type data: pd.DataFrame
+        :type target_event: str
+        :type settings: dict
+        :type event_filter: list or other iterable
+        :type n_start_events: int
+        :type emb_type: str
+        :type ngram_range: tuple[int]
+        :type emb_dims: int
+        :type embedder: object
+        """
 
         self._source_data = data
         self.data = self._prepare_dataset(data, target_event, event_filter, n_start_events)
@@ -70,7 +111,7 @@ class Model:
         if event_filter is not None:
             df = df[df.event_name.isin(event_filter)]
         df = df.sort_values('event_timestamp')
-        train = df.groupby('user_pseudo_id').event_name.agg(str_agg)
+        train = df.groupby('user_pseudo_id').event_name.agg(_str_agg)
         train = train.reset_index(None)
         train.event_name = train.event_name.apply(lambda x: x.split())
         train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
@@ -98,7 +139,14 @@ class Model:
         self.plot()
 
     def fit_model(self, model_type='logit'):
-        self.model_type = model_type
+        """
+        Fits classifier
+
+        :param model_type: type of model (now only logit is supported)
+        :return: None
+        :type model_type: str
+        """
+        self._model_type = model_type
         x_train_vec, x_test_vec, y_train, y_test = self._prepare_data()
         if model_type == 'logit':
             from sklearn.linear_model import LogisticRegression
@@ -108,10 +156,25 @@ class Model:
         self._validate(x_test_vec, y_test)
 
     def predict_proba(self, sample):
+        """
+        Predicts probability of sample
+
+        :param sample: sample of users vectorized tracks (e.g. with `tf-idf` transform)
+        :return: probabilities of different classes as list of
+            `[not target_event probability, target_event probability]`
+        :type sample: np.ndarray or pd.DataFrame
+        :rtype: np.ndarray
+        """
         return self.model.predict_proba(sample)
 
     def build_important_track(self):
-        if self.model_type == 'logit':
+        """
+        Finds the most important tracks for definition of target_event
+
+        :return: most important edges in graph
+        :rtype: pd.DataFrame
+        """
+        if self._model_type == 'logit':
             imp = self.model.coef_
         if self.emb_type == 'tf-idf':
             imp = self._embedder.inverse_transform(imp)[0]
@@ -131,6 +194,19 @@ class Model:
         return TSNE().fit_transform(sample.todense())
 
     def plot_projections(self, sample=None, target=None, ids=None):
+        """
+        Plots tsne projection of users trajectories
+
+        :param sample: sample of trajectories
+        :param target: by which column data should be splitted
+            (if target is None then probabilities of `target_event` is highlighted)
+        :param ids: list of user_ids for visualization in plot
+        :type sample: np.ndarray of pd.DataFrame
+        :type target: str
+        :type ids: list or other iterable
+
+        :return: None
+        """
         if sample is None:
             self._plot_proj_sample(self.features, self.target, self.users)
         else:
@@ -197,15 +273,27 @@ class Model:
         return data
 
     def plot_cluster_track(self, bbox):
+        """
+        Plots graph for users in selected area
+
+        :param bbox: coordinates of top-left and bottom-right angles of area
+        :type bbox: List[List[float]]
+        :return: None
+        """
         data = self._get_data_from_plot(bbox)
         data_agg = get_all_agg(data, ['trans_count'])
         plot_graph_python(data_agg, 'trans_count', {'export_folder': self.export_folder})
 
     def _check_folder(self, settings):
-        settings = check_folder(settings)
+        settings = _check_folder(settings)
         self.export_folder = settings['export_folder']
 
     def plot(self):
+        """
+        Plot metrics of model
+
+        :return: None
+        """
         f, ax = plt.subplots(1, 2)
         f.set_size_inches(15, 5)
         ax[0].plot(self.roc_c[0], self.roc_c[1])

@@ -7,8 +7,52 @@ from retentioneering.utils import queries
 logger = logging.getLogger()
 
 
+def download_table(client, dataset_id, table_id):
+    """
+    Download table from bigquery
+
+    :param client: bigquery client
+    :param dataset_id: target dataset id
+    :param table_id: target table id
+
+    :type client: bigquery.Client()
+    :type dataset_id: str
+    :type table_id: str
+    :return: pd.DataFrame
+    """
+    target_table = client.dataset(dataset_id).table(table_id)
+    table = client.get_table(target_table)
+    rows = client.list_rows(target_table, selected_fields=table.schema)
+    data = rows.to_dataframe()
+    return data
+
+
 def download_bq(client, query, job_config=None, group_name=None, return_dataframe=True, return_only_query=False,
                 hide_progress_bar=False, progress_bar_min_interval=4, **params):
+    """
+    Run a query in bigquery and download results
+
+    :param client: bigquery client
+    :param query: query to run (it could be string with params)
+    :param job_config: bigquery client job config
+    :param group_name: add new column 'group_name' with value
+    :param return_dataframe: if is true then data will be returned as pd.DataFrame, list otherwise
+    :param return_only_query: return only query string without running
+    :param hide_progress_bar: hide tqdm progress bar
+    :param progress_bar_min_interval: min interval of tqdm progress bar in seconds
+    :param **params: options to pass in query.format function
+
+    :type client: bigquery.Client()
+    :type query: str
+    :type job_config: bigquery.QueryJobConfig()
+    :type group_name: str or None
+    :type return_dataframe: bool
+    :type return_only_query: bool
+    :type hide_progress_bar: bool
+    :type progress_bar_min_interval: int
+    :type **params: keywords
+    :return: list or pd.DataFrame
+    """
     start = datetime.now()
     query = query.format(**params)
     if return_only_query:
@@ -33,7 +77,7 @@ def download_bq(client, query, job_config=None, group_name=None, return_datafram
     return result
 
 
-def prepare_event_filter_query(event_names=None, table_with_events=None):
+def _prepare_event_filter_query(event_names=None, table_with_events=None):
     if table_with_events is None:
         if event_names is None:
             return ''
@@ -48,7 +92,7 @@ def prepare_event_filter_query(event_names=None, table_with_events=None):
     return filter_query
 
 
-def prepare_app_version_filter_query(app_version=None, is_not_first=True):
+def _prepare_app_version_filter_query(app_version=None, is_not_first=True):
     if app_version is None:
         return ''
     app_version_filter = "app_info.version = '{}'".format(app_version)
@@ -59,7 +103,7 @@ def prepare_app_version_filter_query(app_version=None, is_not_first=True):
     return app_version_filter
 
 
-def prepare_drop_duplicates_flag(drop_duplicates=None):
+def _prepare_drop_duplicates_flag(drop_duplicates=None):
     if drop_duplicates is None:
         return ''
     res = ", ROW_NUMBER() OVER (PARTITION BY {}) AS row_n".format(','.join(['tbl1.' + col for col in drop_duplicates]))
@@ -67,13 +111,29 @@ def prepare_drop_duplicates_flag(drop_duplicates=None):
 
 
 def download_events_multi(client, job_config, settings=None, return_only_query=False, **kwargs):
+    """
+    Generate queries from settings, run them in bigquery and download results
+
+    :param client: bigquery client
+    :param job_config: bigquery client job config
+    :param settings: settings dict
+    :param return_only_query: return only query string for all queries without running
+    :param **kwargs: options to pass in download_events function
+
+    :type client: bigquery.Client()
+    :type job_config: bigquery.QueryJobConfig()
+    :type settings: dict
+    :type return_only_query: bool
+    :type **kwargs: keywords
+    :return: pd.DataFrame or list
+    """
     df = pd.DataFrame()
     res = []
     if settings is not None:
         for settings_name, settings_config in settings['sql'].items():
             if return_only_query:
                 res.append(download_events(client=client, job_config=job_config, return_dataframe=True,
-                                           settings=settings_config, group_name=settings_name, 
+                                           settings=settings_config, group_name=settings_name,
                                            return_only_query=return_only_query, **kwargs))
             else:
                 job_config.write_disposition = "WRITE_TRUNCATE"
@@ -93,6 +153,53 @@ def download_events(client, job_config, user_filter_event_names=None, user_filte
                     random_user_limit=None, random_seed=None, settings=None, group_name=None, drop_duplicates=None,
                     return_dataframe=True, return_only_query=False, hide_progress_bar=False,
                     progress_bar_min_interval=4):
+    """
+
+    :param client: bigquery client
+    :param job_config: bigquery client job config
+    :param user_filter_event_names: filter on events for user selection
+    :param user_filter_event_table: name of the table with users
+    :param dates_users: first and last dates of first user appearance
+    :param users_app_version: select only users with this app_version
+    :param event_filter_event_names: select only users with such events
+    :param event_filter_event_table: name of the table with events
+    :param dates_events: first and last date of the event selection period
+    :param events_app_version: app version filter for event table
+    :param count_events: number of event which are taking from the event table for every user
+    :param use_last_events: use last events before target event if true, use first events after otherwise
+    :param random_user_limit: number of random selected users
+    :param random_seed: random seed
+    :param settings: settings dict
+    :param group_name: add new column 'group_name' with value
+    :param drop_duplicates: list of columns in bigquery table which are used to drop duplicates
+    :param return_dataframe: if is true then data will be returned as pd.DataFrame, list otherwise
+    :param return_only_query: return only query string without running
+    :param hide_progress_bar: hide tqdm progress bar
+    :param progress_bar_min_interval: min interval of tqdm progress bar in seconds
+
+    :type client: bigquery.Client()
+    :type job_config: bigquery.QueryJobConfig()
+    :type user_filter_event_names: list
+    :type user_filter_event_table: str
+    :type dates_users: tuple or list
+    :type users_app_version: str
+    :type event_filter_event_names: list
+    :type event_filter_event_table: str
+    :type dates_events: tuple or list
+    :type events_app_version: str
+    :type count_events: int
+    :type use_last_events: bool
+    :type random_user_limit: int
+    :type random_seed: int
+    :type settings: dict
+    :type group_name: str
+    :type drop_duplicates: list
+    :type return_dataframe: bool
+    :type return_only_query: bool
+    :type hide_progress_bar: bool
+    :type progress_bar_min_interval: int
+    :return:
+    """
     if settings is not None:
         user_filter_event_names = settings['user_filters'].get('event_names')
         users_app_version = settings['user_filters'].get('app_version')
@@ -111,11 +218,11 @@ def download_events(client, job_config, user_filter_event_names=None, user_filte
     else:
         assert all(v is not None for v in [dates_events, dates_users])
 
-    users_event_filter = prepare_event_filter_query(user_filter_event_names, user_filter_event_table)
-    users_app_version_filter = prepare_app_version_filter_query(users_app_version, users_event_filter)
-    events_filter = prepare_event_filter_query(event_filter_event_names, event_filter_event_table)
-    events_app_version_filter = prepare_app_version_filter_query(events_app_version, events_filter)
-    duplicate_event_flag = prepare_drop_duplicates_flag(drop_duplicates)
+    users_event_filter = _prepare_event_filter_query(user_filter_event_names, user_filter_event_table)
+    users_app_version_filter = _prepare_app_version_filter_query(users_app_version, users_event_filter)
+    events_filter = _prepare_event_filter_query(event_filter_event_names, event_filter_event_table)
+    events_app_version_filter = _prepare_app_version_filter_query(events_app_version, events_filter)
+    duplicate_event_flag = _prepare_drop_duplicates_flag(drop_duplicates)
 
     new_users_query = queries.query_with_params.format(
         rank_sort_type='DESC' if use_last_events else '',
