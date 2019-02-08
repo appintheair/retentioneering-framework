@@ -1,10 +1,10 @@
 import json
 from datetime import datetime
 import os
-from retentioneering.analysis.utils import get_shift, get_all_agg, _check_folder
 import requests
 from IPython.display import HTML, display
 import warnings
+from retentioneering.analysis.utils import get_shift, get_all_agg, _check_folder
 
 
 def _get_session(df, order='all', treshold=0.5):
@@ -21,7 +21,7 @@ def _get_session(df, order='all', treshold=0.5):
 
 
 def plot_graph_api(df, settings, users='all', task='lost', order='all', treshold=0.5,
-                  start_event=None, end_event=None):
+                   start_event=None, end_event=None):
     warnings.warn('Please use retentioneering.visualization.plot_graph_api instead')
     export_folder, graph_name, set_name = export_tracks(df, settings, users, task, order, treshold,
                                                         start_event, end_event)
@@ -82,12 +82,12 @@ def export_tracks(df, settings, users='all', task='lost', order='all', treshold=
     if task == 'lost' and start_event is None:
         settings['start_event'] = 'welcome_see_screen'
     # else:
-        # settings['start_event'] = 'start'
-        # df = df.sort_values(['user_pseudo_id', 'event_timestamp'])
-        # first = df.groupby('user_pseudo_id', as_index=False).first()
-        # first.event_timestamp -= 1
-        # first.event_name = 'start'
-        # df = df.append(first, ignore_index=True, sort=False)
+    # settings['start_event'] = 'start'
+    # df = df.sort_values(['user_pseudo_id', 'event_timestamp'])
+    # first = df.groupby('user_pseudo_id', as_index=False).first()
+    # first.event_timestamp -= 1
+    # first.event_name = 'start'
+    # df = df.append(first, ignore_index=True, sort=False)
 
     agg_list = ['trans_count', 'dt_mean', 'dt_median', 'dt_min', 'dt_max']
 
@@ -117,6 +117,3 @@ def export_tracks(df, settings, users='all', task='lost', order='all', treshold=
     graph_name = 'graph_{}.csv'.format(datetime.now())
     df.to_csv(os.path.join(export_folder, graph_name), index=False)
     return export_folder, graph_name, set_name
-
-
-

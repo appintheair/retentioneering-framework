@@ -1,4 +1,5 @@
 cmake>=3.13.3
+Cython>=0.29
 google-cloud>=0.34.0
 google-cloud-bigquery>=1.6.0
 grandalf>=0.6
