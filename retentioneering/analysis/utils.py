@@ -1,14 +1,27 @@
+from datetime import datetime
+import json
+import networkx as nx
 import numpy as np
+import os
 import pandas as pd
 import seaborn as sns
-from datetime import datetime
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.neighbors import NearestNeighbors
-import networkx as nx
-import os
-import json
 import warnings
+
+
+def _check_folder(settings):
+    if settings.get('export_folder'):
+        return settings
+    else:
+        if not os.path.isdir('./experiments/'):
+            os.mkdir('./experiments/')
+        settings['export_folder'] = './experiments/{}'.format(datetime.now())
+        os.mkdir(settings['export_folder'])
+        with open(os.path.join(settings['export_folder'], 'settings_{}.json'.format(datetime.now())), 'w') as f:
+            json.dump(settings, f)
+    return settings
 
 
 def _str_agg(x):
@@ -43,7 +56,7 @@ def prepare_dataset(df, target_event, event_filter=None, n_start_events=None):
         train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
     else:
         train.event_name = train.event_name.apply(lambda x: ' '.join(x))
-        return train
+    return train
 
 
 def get_agg(df, agg_type):
@@ -174,19 +187,6 @@ def get_accums(agg, name, max_rank):
         )
     lost['event_name'] = 'Accumulated ' + name.capitalize()
     return lost
-
-
-def _check_folder(settings):
-    if settings.get('export_folder'):
-        return settings
-    else:
-        if not os.path.isdir('./experiments/'):
-            os.mkdir('./experiments/')
-        settings['export_folder'] = './experiments/{}'.format(datetime.now())
-        os.mkdir(settings['export_folder'])
-        with open(os.path.join(settings['export_folder'], 'settings_{}.json'.format(datetime.now())), 'w') as f:
-            json.dump(settings, f)
-    return settings
 
 
 def get_desc_table(df, settings, target_event_list=list(['lost', 'passed']), max_steps=None, plot=True, plot_name=None):
@@ -348,10 +348,10 @@ def plot_graph_python(df_agg, agg_type, settings, layout=nx.random_layout, plot_
 
     pos = layout(G, seed=2)
     f = sns.mpl.pyplot.figure(figsize=(20, 10))
-    nx.draw_networkx_edges(G, pos, edge_color='b', alpha=0.2, width=width);
+    nx.draw_networkx_edges(G, pos, edge_color='b', alpha=0.2, width=width)
     nx.draw_networkx_nodes(G, pos, node_color='b', alpha=0.3)
     pos = {k: [pos[k][0], pos[k][1] + 0.03] for k in pos.keys()}
-    nx.draw_networkx_labels(G, pos, node_color='b', font_size=16);
+    nx.draw_networkx_labels(G, pos, node_color='b', font_size=16)
     sns.mpl.pyplot.axis('off')
 
     settings = _check_folder(settings)

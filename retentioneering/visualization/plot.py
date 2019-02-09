@@ -1,28 +1,43 @@
-import seaborn as sns
+from IPython.display import display, HTML
+from datetime import datetime
 import networkx as nx
 import os
-from datetime import datetime
 import requests
-from IPython.display import HTML
-from IPython.display import display
+import seaborn as sns
 import numpy as np
 from retentioneering.analysis.utils import _check_folder
 from retentioneering.utils.export import export_tracks
 
 
-def plot_graph(df_agg, agg_type, settings, layout=nx.random_layout, plot_name=None):
+def _save_graph(graph, graph_name, settings, plot_name=None):
+    settings = _check_folder(settings)
+    export_folder = settings['export_folder']
+    if plot_name:
+        export_filename = os.path.join(export_folder, '{}_{}.png'.format(graph_name, plot_name))
+    else:
+        export_filename = os.path.join(export_folder, '{}_{}.png'.format(graph_name, datetime.now()))
+    if isinstance(graph, sns.mpl.axes.Axes):
+        graph = graph.get_figure()
+    graph.savefig(export_filename)
+
+
+def plot_graph(df_agg, agg_type, settings, layout=nx.random_layout, save=True, figsize=(20, 10), plot_name=None):
     """
     Visualize trajectories from aggregated tables (with python)
 
     :param df_agg: table with aggregates (from retentioneering.analysis.get_all_agg function)
     :param agg_type: name of col for weighting graph nodes (column name from df)
     :param settings: experiment config (can be empty dict here)
-    :param layout: function that return dictionary of positions keyed by node for NetworkX graph.
+    :param layout: function that return dictionary of positions keyed by node for NetworkX graph
+    :param save: True if the graph should be saved
+    :param figsize: width, height in inches. If not provided, defaults to rcParams["figure.figsize"] = [6.4, 4.8]
     :param plot_name: name of file with graph plot
     :type df_agg: pd.DataFrame
     :type agg_type: str
     :type settings: dict
     :type layout: func
+    :type save: bool
+    :type figsize: tuple
     :type plot_name: str
     :return: None
     """
@@ -42,20 +57,14 @@ def plot_graph(df_agg, agg_type, settings, layout=nx.random_layout, plot_name=No
         width = width * 3 / max(width)
 
     pos = layout(G)
-    f = sns.mpl.pyplot.figure(figsize=(20, 10))
+    f = sns.mpl.pyplot.figure(figsize=figsize)
     nx.draw_networkx_edges(G, pos, edge_color='b', alpha=0.2, width=width)
     nx.draw_networkx_nodes(G, pos, node_color='b', alpha=0.3)
     pos = {k: [pos[k][0], pos[k][1] + 0.03] for k in pos.keys()}
     nx.draw_networkx_labels(G, pos, node_color='b', font_size=16)
     sns.mpl.pyplot.axis('off')
-
-    settings = _check_folder(settings)
-    export_folder = settings['export_folder']
-    if plot_name:
-        filename = os.path.join(export_folder, 'graphvis_{}.png'.format(plot_name))
-    else:
-        filename = os.path.join(export_folder, 'graphvis_{}.png'.format(datetime.now()))
-    f.savefig(filename)
+    if save:
+        _save_graph(f, 'graphvis', settings, plot_name)
 
 
 def plot_graph_api(df, settings, users='all', task='lost', order='all', threshold=0.5,
@@ -63,7 +72,8 @@ def plot_graph_api(df, settings, users='all', task='lost', order='all', threshol
     """
     Visualize trajectories from event clickstream (with Mathematica)
 
-    :param df: event clickstream
+    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
+            `event_timestamp` and `user_pseudo_id`
     :param settings: experiment config (can be empty dict here)
     :param users: `all` or list of user ids to plot specific group
     :param task: type of task for different visualization (can be `lost` or `prunned_welcome`)
@@ -110,3 +120,100 @@ def _api_plot(export_folder, graph_name, set_name, plot_type='lost', download_pa
     else:
         with open(os.path.join(download_path, 'graph_plot.pdf'), 'wb') as f:
             f.write(r.content)
+
+
+def bars(x, y, settings=dict(), figsize=(8, 5), save=True, plot_name=None):
+    """
+    Plot bar graph
+
+    :param x: bars names
+    :param y: bars values
+    :param settings: experiment config (can be empty dict here)
+    :param figsize: width, height in inches. If not provided, defaults to rcParams["figure.figsize"] = [6.4, 4.8]
+    :param save: True if the graph should be saved
+    :param plot_name: name of file with graph plot
+
+    :type x: list
+    :type y: list
+    :type settings: dict
+    :type figsize: tuple
+    :type save: bool
+    :type plot_name: str
+    :return: None
+    """
+    sns.mpl.pyplot.figure(figsize=figsize)
+    bar = sns.barplot(x, y, palette='YlGnBu')
+    bar.set_xticklabels(bar.get_xticklabels(), rotation=90)
+
+    if save:
+        _save_graph(bar, 'bar', settings, plot_name)
+
+
+def heatmap(x, labels=None, settings=dict(), figsize=(10, 15), save=True, plot_name=None):
+    """
+    Plot heatmap graph
+
+    :param x: data to visualize
+    :param labels: list of labels for x ticks
+    :param settings: experiment config (can be empty dict here)
+    :param figsize: width, height in inches. If not provided, defaults to rcParams["figure.figsize"] = [6.4, 4.8]
+    :param save: True if the graph should be saved
+    :param plot_name: name of file with graph plot
+
+    :type x: list[list]
+    :type labels: str
+    :type settings: dict
+    :type figsize: tuple
+    :type save: bool
+    :type plot_name: str
+    :return: None
+    """
+    sns.mpl.pyplot.figure(figsize=figsize)
+    heatmap = sns.heatmap(x, cmap="YlGnBu")
+    if labels is not None:
+        heatmap.set_xticklabels(labels, rotation=90)
+
+    if save:
+        _save_graph(heatmap, 'countmap', settings, plot_name)
+
+
+def cluster_stats(data, labels=None, settings=dict(), plot_count=2, figsize=(10, 5), save=True, plot_name=None):
+    """
+    Plot pie chart with different events
+
+    :param data: list of lists with size of each group
+    :param labels: list of labels for each group
+    :param settings: experiment config (can be empty dict here)
+    :param plot_count: number of plots to visualize
+    :param figsize: width, height in inches. If not provided, defaults to rcParams["figure.figsize"] = [6.4, 4.8]
+    :param save: True if the graph should be saved
+    :param plot_name: name of file with graph plot
+    :type data: list
+    :type labels: list or tuple
+    :type settings: dict
+    :type plot_count: int
+    :type figsize: tuple
+    :type save: bool
+    :type plot_name: str
+    :return: None
+
+    """
+    if plot_count > len(data):
+        plot_count = len(data)
+    fig, ax = sns.mpl.pyplot.subplots(1 if plot_count <= 2 else ((plot_count - 1) // 2 + 1), (plot_count > 1) + 1)
+    fig.set_size_inches(*figsize)
+    i = 0
+    for i, group_sizes in enumerate(data[:plot_count]):
+        if plot_count == 1:
+            cur_ax = ax
+        elif plot_count == 2:
+            cur_ax = ax[i]
+        else:
+            cur_ax = ax[i // 2][i % 2]
+        cur_ax.pie(group_sizes, labels=labels, autopct='%1.1f%%')
+        cur_ax.set_title('Class {}'.format(i))
+    if plot_count > 1 and i % 2 != 1:
+        fig.delaxes(ax[i // 2, 1])
+
+    if save:
+        _save_graph(fig, 'clusters', settings, plot_name)
