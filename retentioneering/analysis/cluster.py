@@ -20,7 +20,7 @@ def cluster_users(countmap, n_clusters=None, clusterer=None):
     :return: pd.DataFrame
     """
     users_clusters = pd.DataFrame(countmap.index.values, columns=['user_pseudo_id'])
-    if clusterer is not None:
+    if clusterer is None:
         if n_clusters:
             clusterer = KMeans(n_clusters=n_clusters)
         else:
