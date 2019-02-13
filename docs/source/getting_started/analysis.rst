@@ -280,9 +280,6 @@ Model fitting
 
 It returns metrics of quality of the model.
 
-PUT HERE DESCRIPTION OF METRICS
-===============================
-
 Model inference
 ^^^^^^^^^^^^^^^
 
