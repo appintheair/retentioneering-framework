@@ -1,15 +1,16 @@
 from __future__ import print_function
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score, average_precision_score, precision_recall_curve, roc_curve
+from datetime import datetime
 from matplotlib import pyplot as plt
-from MulticoreTSNE import MulticoreTSNE as TSNE
+from MulticoreTSNE import MulticoreTSNE
 import numpy as np
 import os
+import pandas as pd
 import plotly.offline as py
 import plotly.graph_objs as go
-from datetime import datetime
-from retentioneering.analysis.utils import _check_folder, get_all_agg, plot_graph_python
-import pandas as pd
+from sklearn.metrics import roc_auc_score, average_precision_score, precision_recall_curve, roc_curve
+from sklearn.model_selection import train_test_split
+from retentioneering.analysis.utils import _check_folder, get_all_agg
+from retentioneering.visualization import plot
 
 
 def _str_agg(x):
@@ -43,6 +44,7 @@ class Model:
     """
     Base model for classification
     """
+
     def __init__(self, data, target_event, settings, event_filter=None,
                  n_start_events=None, emb_type='tf-idf', ngram_range=(1, 3),
                  emb_dims=None, embedder=None):
@@ -72,7 +74,7 @@ class Model:
         :type emb_type: str
         :type ngram_range: tuple[int]
         :type emb_dims: int
-        :type embedder: object
+        :type embedder: model or None
         """
 
         self._source_data = data
@@ -89,8 +91,10 @@ class Model:
         self.roc_c = None
         self.prec_rec = None
         self._check_folder(settings)
+        self._model_type = None
+        self.model = None
 
-        if embedder:
+        if embedder is not None:
             self._fit_vec = False
         else:
             self._fit_vec = True
@@ -107,15 +111,19 @@ class Model:
             self._embedder = tfidf.fit(sample)
             self._fit_vec = False
 
-    def _prepare_dataset(self, df, target_event, event_filter=None, n_start_events=None):
+    @staticmethod
+    def _prepare_dataset(df, target_event=None, event_filter=None, n_start_events=None):
         if event_filter is not None:
             df = df[df.event_name.isin(event_filter)]
         df = df.sort_values('event_timestamp')
         train = df.groupby('user_pseudo_id').event_name.agg(_str_agg)
         train = train.reset_index(None)
         train.event_name = train.event_name.apply(lambda x: x.split())
-        train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
-        train.event_name = train.event_name.apply(lambda x: x[:-1])
+        if target_event is not None:
+            train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
+            train.event_name = train.event_name.apply(lambda x: x[:-1])
+        else:
+            train.event_name = train.event_name.apply(lambda x: x)
         if n_start_events:
             train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
         else:
@@ -176,6 +184,8 @@ class Model:
         """
         if self._model_type == 'logit':
             imp = self.model.coef_
+        else:
+            raise NotImplementedError('Sorry, but only logit available in model type')
         if self.emb_type == 'tf-idf':
             imp = self._embedder.inverse_transform(imp)[0]
         edges = []
@@ -190,8 +200,9 @@ class Model:
                 edges.append([j[0], None])
         return pd.DataFrame(edges).drop_duplicates()
 
-    def _get_tsne(self, sample):
-        return TSNE().fit_transform(sample.todense())
+    @staticmethod
+    def _get_tsne(sample):
+        return MulticoreTSNE().fit_transform(sample.todense())
 
     def plot_projections(self, sample=None, target=None, ids=None):
         """
@@ -257,7 +268,8 @@ class Model:
 
         py.init_notebook_mode()
         py.iplot(figs)
-        filename = os.path.join(self.export_folder, 'tsne {}.html'.format(datetime.now()))
+        filename = os.path.join(
+            self.export_folder, 'tsne_{}.html'.format(datetime.now().strftime('%Y-%m-%dT%H_%M_%S_%f')))
         py.plot(figs, filename=filename, auto_open=False)
 
     def _get_data_from_plot(self, bbox):
@@ -282,7 +294,7 @@ class Model:
         """
         data = self._get_data_from_plot(bbox)
         data_agg = get_all_agg(data, ['trans_count'])
-        plot_graph_python(data_agg, 'trans_count', {'export_folder': self.export_folder})
+        plot.plot_graph(data_agg, 'trans_count', {'export_folder': self.export_folder})
 
     def _check_folder(self, settings):
         settings = _check_folder(settings)

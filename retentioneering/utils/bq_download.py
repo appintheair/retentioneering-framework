@@ -78,57 +78,6 @@ def run_query(client, query, job_config=None, group_name=None, return_dataframe=
     return result
 
 
-def download_bq(client, query, job_config=None, group_name=None, return_dataframe=True, return_only_query=False,
-                hide_progress_bar=False, progress_bar_min_interval=4, **params):
-    warnings.warn('Please use retentioneering.utils.bq_download.run_query instead', DeprecationWarning)
-    """
-    Run a query in bigquery and download results
-
-    :param client: bigquery client
-    :param query: query to run (it could be string with params)
-    :param job_config: bigquery client job config
-    :param group_name: add new column 'group_name' with value
-    :param return_dataframe: if is true then data will be returned as pd.DataFrame, list otherwise
-    :param return_only_query: return only query string without running
-    :param hide_progress_bar: hide tqdm progress bar
-    :param progress_bar_min_interval: min interval of tqdm progress bar in seconds
-    :param **params: options to pass in query.format function
-
-    :type client: bigquery.Client()
-    :type query: str
-    :type job_config: bigquery.QueryJobConfig()
-    :type group_name: str or None
-    :type return_dataframe: bool
-    :type return_only_query: bool
-    :type hide_progress_bar: bool
-    :type progress_bar_min_interval: int
-    :type **params: keywords
-    :return: list or pd.DataFrame
-    """
-    start = datetime.now()
-    query = query.format(**params)
-    if return_only_query:
-        return query
-    query_results = client.query(query, job_config=job_config)
-    rows = query_results.result()
-    total_time = datetime.now() - start
-    logging.info('Query complete in {} seconds\n'.format(total_time.total_seconds()))
-    dest_table = client.get_table(job_config.destination)
-    result = []
-    for i, row in tqdm(enumerate(rows), mininterval=progress_bar_min_interval, total=dest_table.num_rows,
-                       disable=hide_progress_bar):
-        items = list(row.values())
-        if group_name is not None:
-            items += [group_name]
-        result.append(items)
-    if return_dataframe:
-        col_names = [col.name for col in dest_table.schema]
-        if group_name is not None:
-            col_names += ['group_name']
-        result = pd.DataFrame(result, columns=col_names)
-    return result
-
-
 def _prepare_event_filter_query(event_names=None, table_with_events=None):
     if table_with_events is None:
         if event_names is None:
@@ -300,6 +249,6 @@ def download_events(client, job_config, user_filter_event_names=None, user_filte
     )
 
     result = run_query(client=client, query=new_users_query, job_config=job_config, group_name=group_name,
-                         return_dataframe=return_dataframe, return_only_query=return_only_query,
-                         hide_progress_bar=hide_progress_bar, progress_bar_min_interval=progress_bar_min_interval)
+                       return_dataframe=return_dataframe, return_only_query=return_only_query,
+                       hide_progress_bar=hide_progress_bar, progress_bar_min_interval=progress_bar_min_interval)
     return result

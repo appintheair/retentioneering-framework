@@ -1,10 +1,10 @@
 from IPython.display import display, HTML
 from datetime import datetime
 import networkx as nx
+import numpy as np
 import os
 import requests
 import seaborn as sns
-import numpy as np
 from retentioneering.analysis.utils import _check_folder
 from retentioneering.utils.export import export_tracks
 
@@ -12,10 +12,9 @@ from retentioneering.utils.export import export_tracks
 def _save_graph(graph, graph_name, settings, plot_name=None):
     settings = _check_folder(settings)
     export_folder = settings['export_folder']
-    if plot_name:
-        export_filename = os.path.join(export_folder, '{}_{}.png'.format(graph_name, plot_name))
-    else:
-        export_filename = os.path.join(export_folder, '{}_{}.png'.format(graph_name, datetime.now()))
+    if not plot_name:
+        plot_name = datetime.now().strftime('%Y-%m-%dT%H_%M_%S_%f')
+    export_filename = os.path.join(export_folder, '{}_{}.png'.format(graph_name, plot_name))
     if isinstance(graph, sns.mpl.axes.Axes):
         graph = graph.get_figure()
     graph.savefig(export_filename)
@@ -196,7 +195,6 @@ def cluster_stats(data, labels=None, settings=dict(), plot_count=2, figsize=(10,
     :type save: bool
     :type plot_name: str
     :return: None
-
     """
     if plot_count > len(data):
         plot_count = len(data)

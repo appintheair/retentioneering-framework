@@ -108,3 +108,4 @@ venv.bak/
 data/
 credentials/
 iappintheair-bigquery-reader.json
+.DS_Store
