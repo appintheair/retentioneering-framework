@@ -1,0 +1,546 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.preparing package &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="retentioneering.analysis package" href="retentioneering.analysis.html" />
+    <link rel="prev" title="Analysis" href="getting_started/analysis.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preparing Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.preparing.preparing">retentioneering.preparing.preparing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.preparing">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>retentioneering.preparing package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/retentioneering.preparing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retentioneering-preparing-package">
+<h1>retentioneering.preparing package<a class="headerlink" href="#retentioneering-preparing-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retentioneering.preparing.preparing">
+<span id="retentioneering-preparing-preparing-module"></span><h2>retentioneering.preparing.preparing module<a class="headerlink" href="#module-retentioneering.preparing.preparing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retentioneering.preparing.preparing.SessionSplitter">
+<em class="property">class </em><code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">SessionSplitter</code><span class="sig-paren">(</span><em>n_components</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for session splitting processing</p>
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.add_session_column">
+<code class="descname">add_session_column</code><span class="sig-paren">(</span><em>df</em>, <em>thr</em>, <em>sort</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.add_session_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.add_session_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates columns with session rank.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame with columns responding for
+Event Name, Event Timestamp and User ID</li>
+<li><strong>thr</strong> (<em>float</em>) – time threshold from previous step for session interruption</li>
+<li><strong>sort</strong> (<em>bool</em>) – If sorting by User ID &amp; Event Timestamp is required</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">input data with columns <cite>session</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.add_time_from_prev_event">
+<code class="descname">add_time_from_prev_event</code><span class="sig-paren">(</span><em>df</em>, <em>unit=None</em>, <em>delta_unit='s'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.add_time_from_prev_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.add_time_from_prev_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds time from previous event column.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame with columns responding for
+Event Name, Event Timestamp and User ID</li>
+<li><strong>unit</strong> (<em>str</em>) – type of string for pd.datetime parsing</li>
+<li><strong>delta_unit</strong> (<em>str</em>) – step in timestamp column (e.g. seconds from <cite>01-01-1970</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">input data with column <cite>from_prev_event</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>columns_config</em>, <em>unit=None</em>, <em>delta_unit='s'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the gausian mixture model for understanding threshold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> – DataFrame with columns responding for
+Event Name, Event Timestamp and User ID</li>
+<li><strong>columns_config</strong> – Dictionary that maps to required column names:
+{‘event_name_col’: Event Name Column,
+‘event_timestamp_col’ Event Timestamp Column,
+‘user_id_col’: User ID Column}</li>
+<li><strong>unit</strong> – type of string for pd.datetime parsing</li>
+<li><strong>delta_unit</strong> – step in timestamp column (e.g. seconds from <cite>01-01-1970</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.get_threshold">
+<code class="descname">get_threshold</code><span class="sig-paren">(</span><em>thr=0.95</em>, <em>thrs=array([1.00000e+00</em>, <em>1.25000e+00</em>, <em>1.50000e+00</em>, <em>...</em>, <em>2.99950e+03</em>, <em>2.99975e+03</em>, <em>3.00000e+03])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.get_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.get_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best threshold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>thr</strong> (<em>float in interval</em><em> (</em><em>0</em><em>, </em><em>1</em><em>)</em>) – Probability threshold for session interruption</li>
+<li><strong>thrs</strong> (<em>List</em><em>[</em><em>float</em><em>] or </em><em>iterable</em>) – Timedelta values for threshold checking</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">value of threshold</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em>, <em>thr_prob=0.95</em>, <em>thrs=array([1.00000e+00</em>, <em>1.25000e+00</em>, <em>1.50000e+00</em>, <em>...</em>, <em>2.99950e+03</em>, <em>2.99975e+03</em>, <em>3.00000e+03])</em>, <em>sort=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts sessions for passed DataFrame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame with columns responding for
+Event Name, Event Timestamp and User ID</li>
+<li><strong>thr_prob</strong> (<em>float</em>) – Probability threshold for session interruption</li>
+<li><strong>thrs</strong> (<em>List</em><em>[</em><em>float</em><em>] or </em><em>iterable</em>) – Timedelta values for threshold checking</li>
+<li><strong>sort</strong> (<em>bool</em>) – If sorting by User ID &amp; Event Timestamp is required</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.preparing.preparing.SessionSplitter.visualize">
+<code class="descname">visualize</code><span class="sig-paren">(</span><em>df</em>, <em>figsize=(15</em>, <em>5)</em>, <em>dpi=500</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#SessionSplitter.visualize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.SessionSplitter.visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize mixture of found distributions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame with columns responding for
+Event Name, Event Timestamp and User ID</li>
+<li><strong>figsize</strong> (<em>tuple</em>) – size of plot</li>
+<li><strong>dpi</strong> (<em>int</em>) – dot per inch to saving plot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.add_first_and_last_events">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">add_first_and_last_events</code><span class="sig-paren">(</span><em>df</em>, <em>first_event_name='fisrt_event'</em>, <em>last_event_name='last_event'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#add_first_and_last_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.add_first_and_last_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>For every user and session adds first event with <cite>first_event_name</cite> and last event with <cite>last_event_name</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input DataFrame</li>
+<li><strong>first_event_name</strong> (<em>str</em>) – name of the first event</li>
+<li><strong>last_event_name</strong> (<em>str</em>) – name of the last event</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.add_lost_events">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">add_lost_events</code><span class="sig-paren">(</span><em>df</em>, <em>positive_event_name='passed'</em>, <em>negative_event_name='lost'</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#add_lost_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.add_lost_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new events with <cite>negative_event_name</cite> in input DataFrame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input pd.DataFrame</li>
+<li><strong>positive_event_name</strong> (<em>str</em>) – positive event name</li>
+<li><strong>negative_event_name</strong> (<em>str</em>) – negative event name which should be added if there is no positive event in the session</li>
+<li><strong>settings</strong> (<em>dict</em>) – config dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.add_passed_event">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">add_passed_event</code><span class="sig-paren">(</span><em>df</em>, <em>positive_event_name='passed'</em>, <em>filters=None</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#add_passed_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.add_passed_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new events with <cite>positive_event_name</cite> and delete all events after.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input pd.DataFrame</li>
+<li><strong>positive_event_name</strong> (<em>str</em>) – name of the positive event which should be added if filter conditions is True</li>
+<li><strong>filters</strong> (<em>dict</em>) – dict with filter conditions</li>
+<li><strong>settings</strong> (<em>config dict</em>) – dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.drop_duplicated_events">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">drop_duplicated_events</code><span class="sig-paren">(</span><em>df</em>, <em>duplicate_thr_time=0</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#drop_duplicated_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.drop_duplicated_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete duplicated events (two events with save event names if the time between them less than duplicate_thr_time).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input pd.DataFrame</li>
+<li><strong>duplicate_thr_time</strong> (<em>int</em>) – threshold for time between events</li>
+<li><strong>settings</strong> (<em>dict</em>) – config dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.filter_events">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">filter_events</code><span class="sig-paren">(</span><em>df</em>, <em>filters=[]</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#filter_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.filter_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply filters to the input table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input pd.DataFrame</li>
+<li><strong>filters</strong> (<em>list</em>) – list each element of which is a filter dict</li>
+<li><strong>settings</strong> (<em>dict</em>) – config dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">self</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.preparing.preparing.filter_users">
+<code class="descclassname">retentioneering.preparing.preparing.</code><code class="descname">filter_users</code><span class="sig-paren">(</span><em>df</em>, <em>filters=[]</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/preparing/preparing.html#filter_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.preparing.preparing.filter_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply filters to users from the input table and leave all events for the received users.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – input pd.DataFrame</li>
+<li><strong>filters</strong> (<em>list</em>) – list each element of which is a filter dict</li>
+<li><strong>settings</strong> (<em>dict</em>) – config dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.preparing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retentioneering.preparing" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="retentioneering.analysis.html" class="btn btn-neutral float-right" title="retentioneering.analysis package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting_started/analysis.html" class="btn btn-neutral" title="Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

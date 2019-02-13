@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.utils.utils &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.utils.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.utils.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="k">import</span> <span class="n">bigquery</span>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.utils.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enrichment of dict class with saving option</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">is_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param filename: str</span>
+<span class="sd">            input file name</span>
+<span class="sd">        :param is_json: bool</span>
+<span class="sd">            read in json format (yaml otherwise)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">if</span> <span class="n">is_json</span> <span class="k">else</span> <span class="nb">super</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Config.export"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.utils.Config.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">is_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dumps config to file</span>
+
+<span class="sd">        :param filename: str</span>
+<span class="sd">            output file name</span>
+<span class="sd">        :param is_json: bool</span>
+<span class="sd">            save in json format (yaml otherwise)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_json</span> <span class="k">else</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="init_client"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.utils.init_client">[docs]</a><span class="k">def</span> <span class="nf">init_client</span><span class="p">(</span><span class="n">service_account_filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the bigquert.Client()</span>
+
+<span class="sd">    :param service_account_filepath: path to service account</span>
+<span class="sd">    :param kwargs: keywords to pass in bigquery.Client.from_service_account_json function</span>
+
+<span class="sd">    :type service_account_filepath: path</span>
+<span class="sd">    :type kwargs: keywords</span>
+<span class="sd">    :return: bigquert.Client()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">from_service_account_json</span><span class="p">(</span><span class="n">service_account_filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="init_job_config"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.utils.init_job_config">[docs]</a><span class="k">def</span> <span class="nf">init_job_config</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">destination_dataset</span><span class="p">,</span> <span class="n">destination_table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the bigquery.QueryJobConfig() with legacy sql and destination table to allow large results</span>
+
+<span class="sd">    :param project: project name where destination table is</span>
+<span class="sd">    :param destination_dataset: dataset id where destination table is</span>
+<span class="sd">    :param destination_table: destination table id</span>
+
+<span class="sd">    :type project: str</span>
+<span class="sd">    :type destination_dataset: str</span>
+<span class="sd">    :type destination_table: str</span>
+<span class="sd">    :return: bigquery.QueryJobConfig()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">job_config</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">QueryJobConfig</span><span class="p">()</span>
+    <span class="n">job_config</span><span class="o">.</span><span class="n">use_legacy_sql</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">job_config</span><span class="o">.</span><span class="n">allow_large_results</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">job_config</span><span class="o">.</span><span class="n">write_disposition</span> <span class="o">=</span> <span class="s2">&quot;WRITE_TRUNCATE&quot;</span>
+    <span class="n">job_config</span><span class="o">.</span><span class="n">destination</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">project</span><span class="p">)</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="n">destination_dataset</span><span class="p">)</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">destination_table</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">job_config</span></div>
+
+
+<div class="viewcode-block" id="init_from_file"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.utils.init_from_file">[docs]</a><span class="k">def</span> <span class="nf">init_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">is_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create bigquert.Client() and bigquery.QueryJobConfig() from json or yaml file</span>
+
+<span class="sd">    :param filename: path to file with config</span>
+<span class="sd">    :param is_json: read file as json if true (read as yaml otherwise)</span>
+
+<span class="sd">    :type filename: path</span>
+<span class="sd">    :type is_json: bool</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">is_json</span><span class="o">=</span><span class="n">is_json</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">init_client</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;service_account_path&#39;</span><span class="p">],</span> <span class="n">project</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;project&#39;</span><span class="p">])</span>
+    <span class="n">settings_subset</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;sql&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">job_config</span> <span class="o">=</span> <span class="n">init_job_config</span><span class="p">(</span>
+        <span class="n">project</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;project&#39;</span><span class="p">],</span>
+        <span class="n">destination_dataset</span><span class="o">=</span><span class="n">settings_subset</span><span class="p">[</span><span class="s1">&#39;destination_table&#39;</span><span class="p">][</span><span class="s1">&#39;dataset&#39;</span><span class="p">],</span>
+        <span class="n">destination_table</span><span class="o">=</span><span class="n">settings_subset</span><span class="p">[</span><span class="s1">&#39;destination_table&#39;</span><span class="p">][</span><span class="s1">&#39;table&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">client</span><span class="p">,</span> <span class="n">job_config</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

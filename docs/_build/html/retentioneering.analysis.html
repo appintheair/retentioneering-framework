@@ -1,0 +1,894 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.analysis package &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="retentioneering.visualization package" href="retentioneering.visualization.html" />
+    <link rel="prev" title="retentioneering.preparing package" href="retentioneering.preparing.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis.calculate">retentioneering.analysis.calculate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis.cluster">retentioneering.analysis.cluster module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis.model">retentioneering.analysis.model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis.utils">retentioneering.analysis.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis.weighter">retentioneering.analysis.weighter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>retentioneering.analysis package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/retentioneering.analysis.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retentioneering-analysis-package">
+<h1>retentioneering.analysis package<a class="headerlink" href="#retentioneering-analysis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retentioneering.analysis.calculate">
+<span id="retentioneering-analysis-calculate-module"></span><h2>retentioneering.analysis.calculate module<a class="headerlink" href="#module-retentioneering.analysis.calculate" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.analysis.calculate.calculate_frequency_hist">
+<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_hist</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=('lost'</em>, <em>'passed')</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>plot_name=None</em>, <em>figsize=(8</em>, <em>5)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate frequency of each event from input clickstream and plot a barplot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>target_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>make_plot</strong> (<em>bool</em>) – plot stats or not</li>
+<li><strong>save</strong> (<em>bool</em>) – True if the graph should be saved</li>
+<li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
+<li><strong>figsize</strong> (<em>tuple</em>) – width, height in inches. If not provided, defaults to rcParams[“figure.figsize”] = [6.4, 4.8]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.calculate.calculate_frequency_map">
+<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_map</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=('lost'</em>, <em>'passed')</em>, <em>plot_name=None</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>figsize_hist=(8</em>, <em>5)</em>, <em>figsize_heatmap=(10</em>, <em>15)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate frequency of each event for each user from input clickstream and plot a heatmap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>target_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
+<li><strong>make_plot</strong> (<em>bool</em>) – plot stats or not</li>
+<li><strong>save</strong> (<em>bool</em>) – True if the graph should be saved</li>
+<li><strong>figsize_hist</strong> (<em>tuple</em>) – width, height in inches for bar plot with events. If None, defaults to rcParams[“figure.figsize”] = [6.4, 4.8]</li>
+<li><strong>figsize_heatmap</strong> (<em>tuple</em>) – width, height in inches for heatmap. If None, defaults to rcParams[“figure.figsize”] = [6.4, 4.8]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.analysis.cluster">
+<span id="retentioneering-analysis-cluster-module"></span><h2>retentioneering.analysis.cluster module<a class="headerlink" href="#module-retentioneering.analysis.cluster" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.analysis.cluster.add_cluster_of_users">
+<code class="descclassname">retentioneering.analysis.cluster.</code><code class="descname">add_cluster_of_users</code><span class="sig-paren">(</span><em>data</em>, <em>users_clusters</em>, <em>how='left'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/cluster.html#add_cluster_of_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.cluster.add_cluster_of_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add cluster of each user to clickstream data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least one column: <cite>user_pseudo_id</cite></li>
+<li><strong>users_clusters</strong> (<em>pd.DataFrame</em>) – DataFrame with <cite>user_pseudo_id</cite> and <cite>cluster</cite> for each user</li>
+<li><strong>how</strong> (<em>str</em>) – argument to pass in pd.merge function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.cluster.calculate_cluster_stats">
+<code class="descclassname">retentioneering.analysis.cluster.</code><code class="descname">calculate_cluster_stats</code><span class="sig-paren">(</span><em>data</em>, <em>users_clusters</em>, <em>settings</em>, <em>target_events=('lost'</em>, <em>'passed')</em>, <em>make_plot=True</em>, <em>plot_count=2</em>, <em>save=True</em>, <em>plot_name=None</em>, <em>figsize=(10</em>, <em>5)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/cluster.html#calculate_cluster_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.cluster.calculate_cluster_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot pie-chart with distribution of target events in clusters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>users_clusters</strong> (<em>pd.DataFrame</em>) – DataFrame with <cite>user_pseudo_id</cite> and <cite>cluster</cite> for each user</li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>target_events</strong> (<em>list</em><em> or </em><em>tuple</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>make_plot</strong> (<em>bool</em>) – plot stats or not</li>
+<li><strong>plot_count</strong> (<em>int</em>) – number of plots for output</li>
+<li><strong>save</strong> – True if the graph should be saved</li>
+<li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
+<li><strong>figsize</strong> (<em>tuple</em>) – width, height in inches. If None, defaults to rcParams[“figure.figsize”] = [6.4, 4.8]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.cluster.cluster_users">
+<code class="descclassname">retentioneering.analysis.cluster.</code><code class="descname">cluster_users</code><span class="sig-paren">(</span><em>countmap</em>, <em>n_clusters=None</em>, <em>clusterer=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/cluster.html#cluster_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.cluster.cluster_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cluster users based on input dataframe and return DataFrame with <cite>user_pseudo_id</cite> and <cite>cluster</cite> for each user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>countmap</strong> (<em>pd.DataFrame</em>) – input dataframe, should have user_id in index. All fields will be features in clustering algorithm</li>
+<li><strong>n_clusters</strong> (<em>int</em>) – supposed number of clusters, could be None</li>
+<li><strong>clusterer</strong> (<em>func</em>) – clustering algorithm. Should have fit_predict function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.analysis.model">
+<span id="retentioneering-analysis-model-module"></span><h2>retentioneering.analysis.model module<a class="headerlink" href="#module-retentioneering.analysis.model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retentioneering.analysis.model.Model">
+<em class="property">class </em><code class="descclassname">retentioneering.analysis.model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>data</em>, <em>target_event</em>, <em>settings</em>, <em>event_filter=None</em>, <em>n_start_events=None</em>, <em>emb_type='tf-idf'</em>, <em>ngram_range=(1</em>, <em>3)</em>, <em>emb_dims=None</em>, <em>embedder=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base model for classification</p>
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.build_important_track">
+<code class="descname">build_important_track</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.build_important_track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.build_important_track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the most important tracks for definition of target_event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">most important edges in graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.fit_model">
+<code class="descname">fit_model</code><span class="sig-paren">(</span><em>model_type='logit'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.fit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.fit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits classifier</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_type</strong> (<em>str</em>) – type of model (now only logit is supported)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot metrics of model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.plot_cluster_track">
+<code class="descname">plot_cluster_track</code><span class="sig-paren">(</span><em>bbox</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.plot_cluster_track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.plot_cluster_track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots graph for users in selected area</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bbox</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em>) – coordinates of top-left and bottom-right angles of area</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.plot_projections">
+<code class="descname">plot_projections</code><span class="sig-paren">(</span><em>sample=None</em>, <em>target=None</em>, <em>ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.plot_projections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.plot_projections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots tsne projection of users trajectories</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<em>np.ndarray of pd.DataFrame</em>) – sample of trajectories</li>
+<li><strong>target</strong> (<em>str</em>) – by which column data should be splitted
+(if target is None then probabilities of <cite>target_event</cite> is highlighted)</li>
+<li><strong>ids</strong> (<em>list</em><em> or </em><em>other iterable</em>) – list of user_ids for visualization in plot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="retentioneering.analysis.model.Model.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>sample</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#Model.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.Model.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts probability of sample</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sample</strong> (<em>np.ndarray</em><em> or </em><em>pd.DataFrame</em>) – sample of users vectorized tracks (e.g. with <cite>tf-idf</cite> transform)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">probabilities of different classes as list of
+<cite>[not target_event probability, target_event probability]</cite></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.model.create_filter">
+<code class="descclassname">retentioneering.analysis.model.</code><code class="descname">create_filter</code><span class="sig-paren">(</span><em>data</em>, <em>n_folds=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/model.html#create_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.model.create_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates interested events filter with histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>n_folds</strong> (<em>int</em>) – number of folds in histogram (it affects how far technical events should be from users` events)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.analysis.utils">
+<span id="retentioneering-analysis-utils-module"></span><h2>retentioneering.analysis.utils module<a class="headerlink" href="#module-retentioneering.analysis.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.analysis.utils.filter_welcome">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">filter_welcome</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#filter_welcome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.filter_welcome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter for truncated welcome visualization</p>
+<dl class="docutils">
+<dt>:param df:data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,</dt>
+<dd><cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">filtered for users events dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_accums">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_accums</code><span class="sig-paren">(</span><em>agg</em>, <em>name</em>, <em>max_rank</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_accums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_accums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates Accumulator Variables</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>agg</strong> – Counts of events by step</li>
+<li><strong>name</strong> – Name of Accumulator</li>
+<li><strong>max_rank</strong> – Number of steps in pivot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Accumulator Variable</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_adjacency">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_adjacency</code><span class="sig-paren">(</span><em>df</em>, <em>adj_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_adjacency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_adjacency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates graph adjacency matrix from table with aggregates by nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – table with aggregates (from retentioneering.analysis.get_all_agg function)</li>
+<li><strong>adj_type</strong> (<em>str</em>) – name of col for weighting graph nodes (column name from df)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">adjacency matrix</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_agg">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_agg</code><span class="sig-paren">(</span><em>df</em>, <em>agg_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_agg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_agg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create aggregates (weights) by time of graph nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>agg_type</strong> (<em>str</em>) – type of aggregate, should be written in form <cite>‘name’ + ‘_’ + aggregate type</cite>
+(e.g. <cite>trans_count</cite> where <cite>trans</cite> is the name and <cite>count</cite> is aggragete type).
+Aggragate types can be: max, min, mean, median, std, count. For greater list, please,
+check the pd.DataFrame.groupby().agg() documentation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">table with aggregates by nodes of graph</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_all_agg">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_all_agg</code><span class="sig-paren">(</span><em>df</em>, <em>agg_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_all_agg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_all_agg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create aggregates (weights) by time of graph nodes from agg_list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>agg_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of needed aggregates, each aggregate should be written in form <cite>‘name’ + ‘_’ + aggregate type</cite>
+(e.g. <cite>trans_count</cite> where <cite>trans</cite> is the name and <cite>count</cite> is aggragete type).
+Aggragate types can be: max, min, mean, median, std, count. For greater list, please,
+check the pd.DataFrame.groupby().agg() documentation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">table with aggregates by nodes of graph</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_desc_table">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_desc_table</code><span class="sig-paren">(</span><em>df, settings, target_event_list=['lost', 'passed'], max_steps=None, plot=True, plot_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_desc_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_desc_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds distribution of events over steps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>target_event_list</strong> (<em>list</em>) – list of target events</li>
+<li><strong>max_steps</strong> (<em>int</em>) – </li>
+<li><strong>plot</strong> (<em>bool</em>) – if True then heatmap is plotted</li>
+<li><strong>plot_name</strong> (<em>str</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Pivot table with distribution of events over steps</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_diff">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_diff</code><span class="sig-paren">(</span><em>df_old</em>, <em>df_new</em>, <em>settings</em>, <em>precalc=False</em>, <em>plot=True</em>, <em>plot_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets difference between two groups</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_old</strong> (<em>pd.DataFrame</em>) – Raw clickstream or calculated desc table of last version</li>
+<li><strong>df_new</strong> (<em>pd.DataFrame</em>) – Raw clickstream or calculated desc table of new version</li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>precalc</strong> (<em>bool</em>) – If True then precalculated desc tables is used</li>
+<li><strong>plot</strong> (<em>bool</em>) – if True then heatmap is plotted</li>
+<li><strong>plot_name</strong> (<em>str</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Table of differences between two versions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.get_shift">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">get_shift</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#get_shift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.get_shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates <cite>next_event</cite> and <cite>time_to_next_event</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">source table with additional columns</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.plot_clusters">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">plot_clusters</code><span class="sig-paren">(</span><em>data, countmap, target_events=['lost', 'passed'], n_clusters=None, plot_cnt=2, width=10, height=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#plot_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.plot_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot pie-chart with distribution of target events in clusters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>countmap</strong> (<em>pd.DataFrame</em>) – result of retentioneering.analysis.utils.plot_frequency_map</li>
+<li><strong>target_events</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>n_clusters</strong> (<em>int</em>) – supposed number of clusters</li>
+<li><strong>plot_cnt</strong> (<em>int</em>) – number of plots for output</li>
+<li><strong>width</strong> (<em>float</em>) – width of plot</li>
+<li><strong>height</strong> (<em>float</em>) – height of plot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.plot_frequency_map">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">plot_frequency_map</code><span class="sig-paren">(</span><em>df, settings, target_events=['lost', 'passed'], plot_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#plot_frequency_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.plot_frequency_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots frequency histogram and heatmap of users` event count</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>target_events</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">table with counts of events for users</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.plot_graph_python">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">plot_graph_python</code><span class="sig-paren">(</span><em>df_agg</em>, <em>agg_type</em>, <em>settings</em>, <em>layout=&lt;function random_layout&gt;</em>, <em>plot_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#plot_graph_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.plot_graph_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize trajectories from aggregated tables (with python)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_agg</strong> (<em>pd.DataFrame</em>) – table with aggregates (from retentioneering.analysis.get_all_agg function)</li>
+<li><strong>agg_type</strong> (<em>str</em>) – name of col for weighting graph nodes (column name from df)</li>
+<li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
+<li><strong>layout</strong> (<em>func</em>) – </li>
+<li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.prepare_dataset">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">prepare_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>target_event</em>, <em>event_filter=None</em>, <em>n_start_events=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#prepare_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.prepare_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares data for classifier inference</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
+<cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
+<li><strong>target_event</strong> (<em>str</em>) – name of event which signalize target function
+(e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
+<li><strong>event_filter</strong> (<em>list</em><em> or </em><em>other iterable</em>) – list of events that is wanted to use in analysis</li>
+<li><strong>n_start_events</strong> – length of users trajectory from start</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">prepared data for inference (glued user events in one trajectory)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.utils.prepare_prunned">
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">prepare_prunned</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#prepare_prunned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.prepare_prunned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter for truncated welcome visualization</p>
+<dl class="docutils">
+<dt>:param df:data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,</dt>
+<dd><cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">filtered for users events dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.analysis.weighter">
+<span id="retentioneering-analysis-weighter-module"></span><h2>retentioneering.analysis.weighter module<a class="headerlink" href="#module-retentioneering.analysis.weighter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.analysis.weighter.calc_all_norm_mech">
+<code class="descclassname">retentioneering.analysis.weighter.</code><code class="descname">calc_all_norm_mech</code><span class="sig-paren">(</span><em>data</em>, <em>mechanics_events</em>, <em>mode='session'</em>, <em>duration_thresh=1</em>, <em>len_thresh=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/weighter.html#calc_all_norm_mech"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.weighter.calc_all_norm_mech" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates weights of different mechanics in users` sessions
+:param data: clickstream data with columns <cite>session</cite> (rank of user`s session)
+:param mechanics_events: mapping of mechanic and its target events
+:param mode: if <cite>session</cite> then calculates weights over session, if <cite>full</cite> over full users story
+:param duration_thresh: duration in time threshold for technical (ping) session deletion
+:param len_thresh: number of events in session threshold for technical (ping) session deletion
+:return: session description with weights of each mechanic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.analysis.weighter.mechanics_enrichment">
+<code class="descclassname">retentioneering.analysis.weighter.</code><code class="descname">mechanics_enrichment</code><span class="sig-paren">(</span><em>data</em>, <em>mechanics</em>, <em>q=0.99</em>, <em>q2=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/weighter.html#mechanics_enrichment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.weighter.mechanics_enrichment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enrich list of events specific for mechanic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – clickstream data with columns <cite>session</cite> (rank of user`s session)</li>
+<li><strong>mechanics</strong> – table with description in form <cite>[‘id’, ‘Events’]</cite>,
+where <cite>id</cite> is mechanic name and <cite>Events</cite> contains target events specific for that <cite>mechanics</cite></li>
+<li><strong>q</strong> – quantile for frequency of target events</li>
+<li><strong>q2</strong> – quantile for frequency of target events of other mechanic</li>
+<li><strong>data</strong> – pd.DataFrame</li>
+<li><strong>mechanics</strong> – pd.DataFrame</li>
+<li><strong>q</strong> – float in interval (0, 1)</li>
+<li><strong>q2</strong> – float in interval (0, 1)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mapping of mechanic and its target events</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict[str, List[str]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retentioneering.analysis" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="retentioneering.visualization.html" class="btn btn-neutral float-right" title="retentioneering.visualization package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="retentioneering.preparing.html" class="btn btn-neutral" title="retentioneering.preparing package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

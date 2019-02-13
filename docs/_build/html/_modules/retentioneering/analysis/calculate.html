@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.analysis.calculate &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.analysis.calculate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.analysis.calculate</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">CountVectorizer</span>
+<span class="kn">from</span> <span class="nn">retentioneering.analysis.utils</span> <span class="k">import</span> <span class="n">prepare_dataset</span>
+<span class="kn">from</span> <span class="nn">retentioneering.visualization</span> <span class="k">import</span> <span class="n">plot</span>
+
+
+<div class="viewcode-block" id="calculate_frequency_hist"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_hist">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_hist</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">),</span>
+                             <span class="n">make_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate frequency of each event from input clickstream and plot a barplot</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param target_events: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">    :param make_plot: plot stats or not</span>
+<span class="sd">    :param save: True if the graph should be saved</span>
+<span class="sd">    :param plot_name: name of file with graph plot</span>
+<span class="sd">    :param figsize: width, height in inches. If not provided, defaults to rcParams[&quot;figure.figsize&quot;] = [6.4, 4.8]</span>
+
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type target_events: tuple or list</span>
+<span class="sd">    :type make_plot: bool</span>
+<span class="sd">    :type save: bool</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :type figsize: tuple</span>
+<span class="sd">    :return: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">nodes_hist</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                  <span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                  <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_timestamp&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">make_plot</span><span class="p">:</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">bars</span><span class="p">(</span><span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span>
+                  <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nodes_hist</span></div>
+
+
+<div class="viewcode-block" id="calculate_frequency_map"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_map">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">),</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">make_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize_hist</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">figsize_heatmap</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate frequency of each event for each user from input clickstream and plot a heatmap</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param target_events: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">    :param plot_name: name of file with graph plot</span>
+<span class="sd">    :param make_plot: plot stats or not</span>
+<span class="sd">    :param save: True if the graph should be saved</span>
+<span class="sd">    :param figsize_hist: width, height in inches for bar plot with events. If None, defaults to rcParams[&quot;figure.figsize&quot;] = [6.4, 4.8]</span>
+<span class="sd">    :param figsize_heatmap: width, height in inches for heatmap. If None, defaults to rcParams[&quot;figure.figsize&quot;] = [6.4, 4.8]</span>
+
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type target_events: tuple or list</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :type make_plot: bool</span>
+<span class="sd">    :type save: bool</span>
+<span class="sd">    :type figsize_hist: tuple</span>
+<span class="sd">    :type figsize_heatmap: tuple</span>
+<span class="sd">    :return: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">cv</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_events</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">)</span>
+    <span class="n">nodes_hist</span> <span class="o">=</span> <span class="n">calculate_frequency_hist</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="n">target_events</span><span class="p">,</span>
+                                          <span class="n">make_plot</span><span class="o">=</span><span class="n">make_plot</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize_hist</span><span class="p">)</span>
+
+    <span class="n">sorted_cols</span> <span class="o">=</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="p">[</span><span class="o">~</span><span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">sorted_cols</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sorted_cols</span><span class="p">),</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">make_plot</span><span class="p">:</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">sorted_cols</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize_heatmap</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

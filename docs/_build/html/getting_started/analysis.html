@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Analysis &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="retentioneering.preparing package" href="../retentioneering.preparing.html" />
+    <link rel="prev" title="Download data" href="data_preparation.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#load-data">Load data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#first-steps">First steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-retentioneering-framework">Import retentioneering framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#events-probability-dynamics">Events` probability dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#difference-in-passed-and-lost-users-behaviour">Difference in passed and lost users behaviour</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agregates-over-user-transitions">Agregates over user transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adjacency-matrix">Adjacency matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#users-clustering">Users clustering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graph-visualization">Graph visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lost-passed-classifier">Lost-Passed classifier</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#model-fitting">Model fitting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-inference">Model inference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-your-data">Understanding your data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-prediction-of-your-model">Understanding prediction of your model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visualizing-graph-for-area">Visualizing graph for area</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-most-important-edges">The most important edges</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/getting_started/analysis.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="analysis">
+<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
+<p>Please, see the <a class="reference external" href="data_preparation.md">data preparation tutorial</a> for
+understand how to prepare data for this functions.</p>
+<div class="section" id="load-data">
+<h2>Load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;example_datasets/train.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="first-steps">
+<h2>First steps<a class="headerlink" href="#first-steps" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we will describe the onboarding lost-passed case.</p>
+<p><strong>Goal</strong></p>
+<p>Our goal is to detect interface elements/screens of an app at which
+users’ engagement drops significantly and induces them to leave the app
+without account registration.</p>
+<p><strong>Tasks</strong></p>
+<ol class="arabic">
+<li><p class="first">Collect data</p>
+</li>
+<li><p class="first">Prepare data</p>
+</li>
+<li><p class="first">Analyze data</p>
+<ol class="arabic">
+<li><p class="first">Build pivot tables</p>
+</li>
+<li><p class="first">Visualize users path in the app</p>
+</li>
+<li><p class="first">Build the classifier</p>
+<ol class="arabic simple">
+<li>Classifier helps you to pick out specific users paths</li>
+</ol>
+<p>2. Classifier allows estimating the probability of the user’s
+leaving from the app based on his current path. One can use this
+information to dynamically change the content of the app to prevent that.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>Expected results</strong></p>
+<ol class="arabic simple">
+<li>You will identify the most “problematic” elements of the app</li>
+</ol>
+<p>2. You will get the classifier which will allow you to predict the user’s
+leaving from the app based on the current user’s behavior</p>
+<div class="section" id="import-retentioneering-framework">
+<h3>Import retentioneering framework<a class="headerlink" href="#import-retentioneering-framework" title="Permalink to this headline">¶</a></h3>
+<p>First of all, we need to import data and set documents config with the export folder
+(you can leave it empty and the script will create a folder with current timestamp).</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">retentioneering</span> <span class="k">import</span> <span class="n">analysis</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;export_folder&#39;</span><span class="p">:</span> <span class="s1">&#39;./experiments/new_experiment&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="events-probability-dynamics">
+<h3>Events` probability dynamics<a class="headerlink" href="#events-probability-dynamics" title="Permalink to this headline">¶</a></h3>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">desc</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_desc_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+                               <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+                               <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">target_event_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span>
+                                                  <span class="s1">&#39;passed&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/desc_table_both.png"><img alt="Probability dynamics" src="../_images/desc_table_both.png" style="width: 1200px;" /></a>
+<dl class="docutils">
+<dt>Each column of the table corresponds to a sequence number</dt>
+<dd>of the user’s steps from the path and each row corresponds to event name.</dd>
+</dl>
+<p>Values of the table show the probability that the user choose the appropriate event at the appropriate step.</p>
+<dl class="docutils">
+<dt>It’s difficult to make a complex analysis from that table so it is better</dt>
+<dd>to split our users to those who leave the app and those who passed.</dd>
+</dl>
+</div>
+<div class="section" id="difference-in-passed-and-lost-users-behaviour">
+<h3>Difference in passed and lost users behaviour<a class="headerlink" href="#difference-in-passed-and-lost-users-behaviour" title="Permalink to this headline">¶</a></h3>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># find users who get lost</span>
+<span class="n">lost_users_list</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span> <span class="o">==</span> <span class="s1">&#39;lost&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="c1"># create filter for lost users</span>
+<span class="n">filt</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">lost_users_list</span><span class="p">)</span>
+
+<span class="c1"># filter data for lost users trajectories</span>
+<span class="n">df_lost</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span>
+
+<span class="c1"># filter data for passed users trajectories</span>
+<span class="n">df_passed</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">filt</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Plot dynamics for different groups.</p>
+<p>Plot for group of users who have <strong>lost</strong> event:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">desc_loss</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_lost</span><span class="p">,</span>
+                                    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+                                    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">target_event_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span>
+                                                       <span class="s1">&#39;passed&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/desc_table_lost.png"><img alt="Probability dynamics for lost users" src="../_images/desc_table_lost.png" style="width: 1200px;" /></a>
+<p>Plot for group of users who have <strong>passed</strong> event:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">desc_loss</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_passed</span><span class="p">,</span>
+                                    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+                                    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">target_event_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span>
+                                                       <span class="s1">&#39;passed&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/desc_table_passed.png"><img alt="Probability dynamics for passed users" src="../_images/desc_table_passed.png" style="width: 1200px;" /></a>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">diff_df</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_diff</span><span class="p">(</span><span class="n">desc_loss</span><span class="p">,</span>
+                            <span class="n">desc_passed</span><span class="p">,</span>
+                            <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+                            <span class="n">precalc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/desc_table_diff.png"><img alt="Difference of probability dynamics over lost and passed users" src="../_images/desc_table_diff.png" style="width: 1200px;" /></a>
+</div>
+<div class="section" id="agregates-over-user-transitions">
+<h3>Agregates over user transitions<a class="headerlink" href="#agregates-over-user-transitions" title="Permalink to this headline">¶</a></h3>
+<p>Lets aggregate our data over users transitions:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">agg_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;trans_count&#39;</span><span class="p">,</span> <span class="s1">&#39;dt_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;dt_median&#39;</span><span class="p">,</span> <span class="s1">&#39;dt_min&#39;</span><span class="p">,</span> <span class="s1">&#39;dt_max&#39;</span><span class="p">]</span>
+<span class="n">df_agg</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_all_agg</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">agg_list</span><span class="p">)</span>
+<span class="n">df_agg</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                    event_name                      next_event  trans_count
+0  onboarding__chooseLoginType                            lost            1
+1  onboarding__chooseLoginType          onboarding_login_Type1          414
+2  onboarding__chooseLoginType          onboarding_login_Type2          159
+3  onboarding__chooseLoginType  onboarding_privacy_policyShown         2133
+4     onboarding__loginFailure                            lost            1
+</pre></div>
+</div>
+<p>Now we can see which transitions take the most time and how often people have used different transitions.</p>
+<p>We could choose the 10 longest users’ paths:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df_agg</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;trans_count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                           event_name                         next_event  trans_count
+84          onboarding_welcome_screen          onboarding_welcome_screen         5021
+85          onboarding_welcome_screen                             passed         2330
+3         onboarding__chooseLoginType     onboarding_privacy_policyShown         2133
+79          onboarding_welcome_screen        onboarding__chooseLoginType         1938
+67     onboarding_privacy_policyShown             onboarding_login_Type1         1675
+11             onboarding_login_Type1  onboarding_privacy_policyAccepted         1666
+82          onboarding_welcome_screen        onboarding_otherLogin__show         1601
+62  onboarding_privacy_policyAccepted          onboarding_welcome_screen         1189
+78          onboarding_welcome_screen                               lost         1043
+47        onboarding_otherLogin__show          onboarding_welcome_screen          876
+</pre></div>
+</div>
+<p>You can see the events where users spend most of their time. It seems
+reasonable to analyze only popular events to get stable results.</p>
+</div>
+<div class="section" id="adjacency-matrix">
+<h3>Adjacency matrix<a class="headerlink" href="#adjacency-matrix" title="Permalink to this headline">¶</a></h3>
+<p>The adjacency matrix is the representation of the graph.
+You can read more about it on the`wiki &lt;<a class="reference external" href="https://en.wikipedia.org/wiki/Adjacency_matrix">https://en.wikipedia.org/wiki/Adjacency_matrix</a>&gt;`__:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">adj_count</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_adjacency</span><span class="p">(</span><span class="n">df_agg</span><span class="p">,</span> <span class="s1">&#39;trans_count&#39;</span><span class="p">)</span>
+<span class="n">adj_count</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                                      onboarding_login_Type1   onboarding_privacy_policyShown
+onboarding_login_Type1                                   0.0                              0.0
+onboarding_privacy_policyShown                        1675.0                              0.0
+onboarding__loginFailure                                 0.0                              0.0
+onboarding_privacy_policyTapToPolicy                     0.0                              0.0
+onboarding_welcome_screen                                0.0                              0.0
+</pre></div>
+</div>
+</div>
+<div class="section" id="users-clustering">
+<h3>Users clustering<a class="headerlink" href="#users-clustering" title="Permalink to this headline">¶</a></h3>
+<p>Also, we could clusterize users by the frequency of events in their path:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">countmap</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/bar.png"><img alt="Hist of frequencies" src="../_images/bar.png" style="width: 1200px;" /></a>
+<a class="reference internal image-reference" href="../_images/countmap.png"><img alt="Heatmap of user trajectories" src="../_images/countmap.png" style="width: 1200px;" /></a>
+<p>On that plot, we can see that some users have pretty close frequencies of different functions usage.</p>
+<p>And we can see that it is useful to separate groups with different conversion rates:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">analysis</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_clusters</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">countmap</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot_cnt</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pie_cluster.png"><img alt="Distribution of target class in founded clusters" src="../_images/pie_cluster.png" style="width: 1200px;" /></a>
+</div>
+<div class="section" id="graph-visualization">
+<h3>Graph visualization<a class="headerlink" href="#graph-visualization" title="Permalink to this headline">¶</a></h3>
+<p>We have two options to plot the graphs:
+1. With python (this is local)
+2. With our API
+(<code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">that</span> <span class="pre">case,</span> <span class="pre">you'll</span> <span class="pre">send</span> <span class="pre">your</span> <span class="pre">data</span> <span class="pre">to</span> <span class="pre">our</span> <span class="pre">servers,</span> <span class="pre">but</span> <span class="pre">we</span> <span class="pre">don't</span> <span class="pre">save</span> <span class="pre">it</span> <span class="pre">and</span> <span class="pre">using</span> <span class="pre">only</span> <span class="pre">for</span> <span class="pre">visualization</span></code>)</p>
+<p>In the second option, the plot looks much better and obvious.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">analysis</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_graph_python</span><span class="p">(</span><span class="n">df_agg</span><span class="p">,</span> <span class="s1">&#39;trans_count&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/graph_1.png"><img alt="Python graph visualization" src="../_images/graph_1.png" style="width: 1200px;" /></a>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">retentioneering.utils.export</span> <span class="k">import</span> <span class="n">plot_graph_api</span>
+<span class="n">plot_graph_api</span><span class="p">(</span><span class="n">df_lost</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lost-passed-classifier">
+<h3>Lost-Passed classifier<a class="headerlink" href="#lost-passed-classifier" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="model-fitting">
+<h4>Model fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">¶</a></h4>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target_event</span><span class="o">=</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit_model</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/scores.png"><img alt="Model metrics" src="../_images/scores.png" style="width: 1200px;" /></a>
+<p>It returns metrics of quality of the model.</p>
+</div>
+<div class="section" id="model-inference">
+<h4>Model inference<a class="headerlink" href="#model-inference" title="Permalink to this headline">¶</a></h4>
+<p>We have data for new users, who are not passed or lost already.</p>
+<p>Lets load it into pandas DataFrame:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;example_datasets/test.cdv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can predict probabilities for new users:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                     user_pseudo_id  not_target    target
+0  000bf8e1812a0335c7e65d52b3f6e816    0.976125  0.023875
+1  00275391998b3f87d798f6e7a1ec5c15    0.757970  0.242030
+2  004ecbe8a710f3c7b5b3cbc9bc0c74b2    0.727521  0.272479
+3  00530441b09d5494b09e936a97d5cb99    0.988654  0.011346
+4  005502038cec478faf343fe54310a848    0.592515  0.407485
+</pre></div>
+</div>
+</div>
+<div class="section" id="understanding-your-data">
+<h4>Understanding your data<a class="headerlink" href="#understanding-your-data" title="Permalink to this headline">¶</a></h4>
+<p>You can plot projection of users trajectories to understand how your data looks likes:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span><span class="o">.</span><span class="n">plot_projections</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/tsne_classes.png"><img alt="Model metrics" src="../_images/tsne_classes.png" style="width: 1200px;" /></a>
+</div>
+<div class="section" id="understanding-prediction-of-your-model">
+<h4>Understanding prediction of your model<a class="headerlink" href="#understanding-prediction-of-your-model" title="Permalink to this headline">¶</a></h4>
+<p>Also, you can plot results of the model inference over that projections to understand the cases where your model fails:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span><span class="o">.</span><span class="n">plot_projections</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/tsne_probs.png"><img alt="Model metrics" src="../_images/tsne_probs.png" style="width: 1200px;" /></a>
+</div>
+<div class="section" id="visualizing-graph-for-area">
+<h4>Visualizing graph for area<a class="headerlink" href="#visualizing-graph-for-area" title="Permalink to this headline">¶</a></h4>
+<p>From the previous plot, you can be interested in what trajectories has high conversion rates.</p>
+<p>You can select the area on that plot and visualize it as a graph:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># write coordinates bbox angles</span>
+
+<span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">26</span><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">plot_cluster_track</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/graph_2.png"><img alt="Python graph visualization" src="../_images/graph_2.png" style="width: 1200px;" /></a>
+</div>
+<div class="section" id="the-most-important-edges">
+<h4>The most important edges<a class="headerlink" href="#the-most-important-edges" title="Permalink to this headline">¶</a></h4>
+<p>You could find what was the most important edges and nodes in your model for debugging
+(e.g. it helps you to understand ‘leaky’ events) or to find problem transitions in your app.</p>
+<p>Edges:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">imp_tracks</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">build_important_track</span><span class="p">()</span>
+<span class="n">imp_tracks</span><span class="p">[</span><span class="n">imp_tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                             0                              1
+0  onboarding__chooselogintype         onboarding_login_type1
+1       onboarding_login_type1       onboarding__loginfailure
+2  onboarding__chooselogintype         onboarding_login_type2
+3       onboarding_login_type2    onboarding_otherlogin__show
+5     onboarding__loginfailure  onboarding_login_type1_cancel
+</pre></div>
+</div>
+<p>Nodes:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">imp_tracks</span><span class="p">[</span><span class="n">imp_tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+<p>Out:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>array([&#39;onboarding__loginfailure&#39;, &#39;onboarding_login_type1&#39;,
+       &#39;onboarding_login_type1_cancel&#39;, &#39;onboarding_login_type2&#39;,
+       &#39;onboarding_otherlogin_privacy_policyshown&#39;,
+       &#39;onboarding_privacy_policydecline&#39;, &#39;onboarding_welcome_screen&#39;],
+      dtype=object)
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../retentioneering.preparing.html" class="btn btn-neutral float-right" title="retentioneering.preparing package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data_preparation.html" class="btn btn-neutral" title="Download data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

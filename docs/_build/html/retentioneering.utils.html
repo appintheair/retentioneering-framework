@@ -1,0 +1,495 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.utils package &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="retentioneering.visualization package" href="retentioneering.visualization.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.utils.bq_download">retentioneering.utils.bq_download module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.utils.export">retentioneering.utils.export module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.utils.queries">retentioneering.utils.queries module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.utils.utils">retentioneering.utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-retentioneering.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>retentioneering.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/retentioneering.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retentioneering-utils-package">
+<h1>retentioneering.utils package<a class="headerlink" href="#retentioneering-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retentioneering.utils.bq_download">
+<span id="retentioneering-utils-bq-download-module"></span><h2>retentioneering.utils.bq_download module<a class="headerlink" href="#module-retentioneering.utils.bq_download" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.utils.bq_download.download_events">
+<code class="descclassname">retentioneering.utils.bq_download.</code><code class="descname">download_events</code><span class="sig-paren">(</span><em>client</em>, <em>job_config</em>, <em>user_filter_event_names=None</em>, <em>user_filter_event_table=None</em>, <em>dates_users=None</em>, <em>users_app_version=None</em>, <em>event_filter_event_names=None</em>, <em>event_filter_event_table=None</em>, <em>dates_events=None</em>, <em>events_app_version=None</em>, <em>count_events=None</em>, <em>use_last_events=False</em>, <em>random_user_limit=None</em>, <em>random_seed=None</em>, <em>settings=None</em>, <em>group_name=None</em>, <em>drop_duplicates=None</em>, <em>return_dataframe=True</em>, <em>return_only_query=False</em>, <em>hide_progress_bar=False</em>, <em>progress_bar_min_interval=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/bq_download.html#download_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.bq_download.download_events" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> (<em>bigquery.Client</em><em>(</em><em>)</em>) – bigquery client</li>
+<li><strong>job_config</strong> (<em>bigquery.QueryJobConfig</em><em>(</em><em>)</em>) – bigquery client job config</li>
+<li><strong>user_filter_event_names</strong> (<em>list</em>) – filter on events for user selection</li>
+<li><strong>user_filter_event_table</strong> (<em>str</em>) – name of the table with users</li>
+<li><strong>dates_users</strong> (<em>tuple</em><em> or </em><em>list</em>) – first and last dates of first user appearance</li>
+<li><strong>users_app_version</strong> (<em>str</em>) – select only users with this app_version</li>
+<li><strong>event_filter_event_names</strong> (<em>list</em>) – select only users with such events</li>
+<li><strong>event_filter_event_table</strong> (<em>str</em>) – name of the table with events</li>
+<li><strong>dates_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – first and last date of the event selection period</li>
+<li><strong>events_app_version</strong> (<em>str</em>) – app version filter for event table</li>
+<li><strong>count_events</strong> (<em>int</em>) – number of event which are taking from the event table for every user</li>
+<li><strong>use_last_events</strong> (<em>bool</em>) – use last events before target event if true, use first events after otherwise</li>
+<li><strong>random_user_limit</strong> (<em>int</em>) – number of random selected users</li>
+<li><strong>random_seed</strong> (<em>int</em>) – random seed</li>
+<li><strong>settings</strong> (<em>dict</em>) – settings dict</li>
+<li><strong>group_name</strong> (<em>str</em>) – add new column ‘group_name’ with value</li>
+<li><strong>drop_duplicates</strong> (<em>list</em>) – list of columns in bigquery table which are used to drop duplicates</li>
+<li><strong>return_dataframe</strong> (<em>bool</em>) – if is true then data will be returned as pd.DataFrame, list otherwise</li>
+<li><strong>return_only_query</strong> (<em>bool</em>) – return only query string without running</li>
+<li><strong>hide_progress_bar</strong> (<em>bool</em>) – hide tqdm progress bar</li>
+<li><strong>progress_bar_min_interval</strong> (<em>int</em>) – min interval of tqdm progress bar in seconds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.bq_download.download_events_multi">
+<code class="descclassname">retentioneering.utils.bq_download.</code><code class="descname">download_events_multi</code><span class="sig-paren">(</span><em>client</em>, <em>job_config</em>, <em>settings=None</em>, <em>return_only_query=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/bq_download.html#download_events_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.bq_download.download_events_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate queries from settings, run them in bigquery and download results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> (<em>bigquery.Client</em><em>(</em><em>)</em>) – bigquery client</li>
+<li><strong>job_config</strong> (<em>bigquery.QueryJobConfig</em><em>(</em><em>)</em>) – bigquery client job config</li>
+<li><strong>settings</strong> (<em>dict</em>) – settings dict</li>
+<li><strong>return_only_query</strong> (<em>bool</em>) – return only query string for all queries without running</li>
+<li><strong>**kwargs</strong> – <p>options to pass in download_events function</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame or list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.bq_download.download_table">
+<code class="descclassname">retentioneering.utils.bq_download.</code><code class="descname">download_table</code><span class="sig-paren">(</span><em>client</em>, <em>dataset_id</em>, <em>table_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/bq_download.html#download_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.bq_download.download_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download table from bigquery</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> (<em>bigquery.Client</em><em>(</em><em>)</em>) – bigquery client</li>
+<li><strong>dataset_id</strong> (<em>str</em>) – target dataset id</li>
+<li><strong>table_id</strong> (<em>str</em>) – target table id</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.bq_download.run_query">
+<code class="descclassname">retentioneering.utils.bq_download.</code><code class="descname">run_query</code><span class="sig-paren">(</span><em>client</em>, <em>query</em>, <em>job_config=None</em>, <em>group_name=None</em>, <em>return_dataframe=True</em>, <em>return_only_query=False</em>, <em>hide_progress_bar=False</em>, <em>progress_bar_min_interval=4</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/bq_download.html#run_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.bq_download.run_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a query in bigquery and download results</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> (<em>bigquery.Client</em><em>(</em><em>)</em>) – bigquery client</li>
+<li><strong>query</strong> (<em>str</em>) – query to run (it could be string with params)</li>
+<li><strong>job_config</strong> (<em>bigquery.QueryJobConfig</em><em>(</em><em>)</em>) – bigquery client job config</li>
+<li><strong>group_name</strong> (<em>str</em><em> or </em><em>None</em>) – add new column ‘group_name’ with value</li>
+<li><strong>return_dataframe</strong> (<em>bool</em>) – if is true then data will be returned as pd.DataFrame, list otherwise</li>
+<li><strong>return_only_query</strong> (<em>bool</em>) – return only query string without running</li>
+<li><strong>hide_progress_bar</strong> (<em>bool</em>) – hide tqdm progress bar</li>
+<li><strong>progress_bar_min_interval</strong> (<em>int</em>) – min interval of tqdm progress bar in seconds</li>
+<li><strong>**params</strong> – <p>options to pass in query.format function</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list or pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.utils.export">
+<span id="retentioneering-utils-export-module"></span><h2>retentioneering.utils.export module<a class="headerlink" href="#module-retentioneering.utils.export" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="retentioneering.utils.export.export_tracks">
+<code class="descclassname">retentioneering.utils.export.</code><code class="descname">export_tracks</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>users='all'</em>, <em>task='lost'</em>, <em>order='all'</em>, <em>treshold=0.5</em>, <em>start_event=None</em>, <em>end_event=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/export.html#export_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.export.export_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize trajectories from event clickstream (with Mathematica)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> – event clickstream</li>
+<li><strong>settings</strong> – experiment config (can be empty dict here)</li>
+<li><strong>users</strong> – <cite>all</cite> or list of user ids to plot specific group</li>
+<li><strong>task</strong> – type of task for different visualization (can be <cite>lost</cite> or <cite>prunned_welcome</cite>)</li>
+<li><strong>order</strong> – depth in sessions for filtering</li>
+<li><strong>threshold</strong> – threshold for session splitting</li>
+<li><strong>start_event</strong> – name of start event in trajectory</li>
+<li><strong>end_event</strong> – name of last event in trajectory</li>
+<li><strong>df</strong> – pd.DataFrame</li>
+<li><strong>settings</strong> – dict</li>
+<li><strong>users</strong> – str or list</li>
+<li><strong>task</strong> – str</li>
+<li><strong>order</strong> – int</li>
+<li><strong>threshold</strong> – float</li>
+<li><strong>start_event</strong> – str</li>
+<li><strong>end_event</strong> – str</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.export.plot_graph_api">
+<code class="descclassname">retentioneering.utils.export.</code><code class="descname">plot_graph_api</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>users='all'</em>, <em>task='lost'</em>, <em>order='all'</em>, <em>treshold=0.5</em>, <em>start_event=None</em>, <em>end_event=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/export.html#plot_graph_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.export.plot_graph_api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.utils.queries">
+<span id="retentioneering-utils-queries-module"></span><h2>retentioneering.utils.queries module<a class="headerlink" href="#module-retentioneering.utils.queries" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retentioneering.utils.utils">
+<span id="retentioneering-utils-utils-module"></span><h2>retentioneering.utils.utils module<a class="headerlink" href="#module-retentioneering.utils.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retentioneering.utils.utils.Config">
+<em class="property">class </em><code class="descclassname">retentioneering.utils.utils.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>filename</em>, <em>is_json=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/utils.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.utils.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Enrichment of dict class with saving option</p>
+<dl class="method">
+<dt id="retentioneering.utils.utils.Config.export">
+<code class="descname">export</code><span class="sig-paren">(</span><em>filename</em>, <em>is_json=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/utils.html#Config.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.utils.Config.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps config to file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> – str
+output file name</li>
+<li><strong>is_json</strong> – bool
+save in json format (yaml otherwise)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.utils.init_client">
+<code class="descclassname">retentioneering.utils.utils.</code><code class="descname">init_client</code><span class="sig-paren">(</span><em>service_account_filepath</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/utils.html#init_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.utils.init_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bigquert.Client()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service_account_filepath</strong> (<em>path</em>) – path to service account</li>
+<li><strong>kwargs</strong> (<em>keywords</em>) – keywords to pass in bigquery.Client.from_service_account_json function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bigquert.Client()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.utils.init_from_file">
+<code class="descclassname">retentioneering.utils.utils.</code><code class="descname">init_from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>is_json=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/utils.html#init_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.utils.init_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create bigquert.Client() and bigquery.QueryJobConfig() from json or yaml file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>path</em>) – path to file with config</li>
+<li><strong>is_json</strong> (<em>bool</em>) – read file as json if true (read as yaml otherwise)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="retentioneering.utils.utils.init_job_config">
+<code class="descclassname">retentioneering.utils.utils.</code><code class="descname">init_job_config</code><span class="sig-paren">(</span><em>project</em>, <em>destination_dataset</em>, <em>destination_table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/utils/utils.html#init_job_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.utils.utils.init_job_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bigquery.QueryJobConfig() with legacy sql and destination table to allow large results</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>project</strong> (<em>str</em>) – project name where destination table is</li>
+<li><strong>destination_dataset</strong> (<em>str</em>) – dataset id where destination table is</li>
+<li><strong>destination_table</strong> (<em>str</em>) – destination table id</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bigquery.QueryJobConfig()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retentioneering.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retentioneering.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="retentioneering.visualization.html" class="btn btn-neutral" title="retentioneering.visualization package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

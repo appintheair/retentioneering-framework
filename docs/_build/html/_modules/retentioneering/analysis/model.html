@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.analysis.model &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.analysis.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.analysis.model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">MulticoreTSNE</span> <span class="k">import</span> <span class="n">MulticoreTSNE</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">plotly.offline</span> <span class="k">as</span> <span class="nn">py</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objs</span> <span class="k">as</span> <span class="nn">go</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">average_precision_score</span><span class="p">,</span> <span class="n">precision_recall_curve</span><span class="p">,</span> <span class="n">roc_curve</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">retentioneering.analysis.utils</span> <span class="k">import</span> <span class="n">_check_folder</span><span class="p">,</span> <span class="n">get_all_agg</span>
+<span class="kn">from</span> <span class="nn">retentioneering.visualization</span> <span class="k">import</span> <span class="n">plot</span>
+
+
+<span class="k">def</span> <span class="nf">_str_agg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="create_filter"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.create_filter">[docs]</a><span class="k">def</span> <span class="nf">create_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates interested events filter with histogram</span>
+
+<span class="sd">    :param data: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param n_folds: number of folds in histogram (it affects how far technical events should be from users` events)</span>
+<span class="sd">    :type data: pd.DataFrame</span>
+<span class="sd">    :type n_folds: int</span>
+<span class="sd">    :return: set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_events</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;event_name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">n_folds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_folds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">200</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">hist</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n_folds</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">hist</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_events</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base model for classification</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">target_event</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">event_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">n_start_events</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emb_type</span><span class="o">=</span><span class="s1">&#39;tf-idf&#39;</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">emb_dims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inits users classifier</span>
+
+<span class="sd">        :param data: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">        :param target_event: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">        :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">        :param event_filter: list of events that is wanted to use in analysis</span>
+<span class="sd">        :param n_start_events: length of users trajectory from start</span>
+<span class="sd">        :param emb_type: type of embedding (now only `tf-idf` is supported)</span>
+<span class="sd">        :param ngram_range:</span>
+<span class="sd">            The lower and upper boundary of the range of n-values for different</span>
+<span class="sd">            n-grams to be extracted. All values of n such that min_n &lt;= n &lt;= max_n</span>
+<span class="sd">            will be used.</span>
+<span class="sd">        :param emb_dims: it is needed only when use emb_type different from `tf-idf`</span>
+<span class="sd">        :param embedder: pretrained model for event embedding (now only `tf-idf` is supported)</span>
+
+<span class="sd">        :type data: pd.DataFrame</span>
+<span class="sd">        :type target_event: str</span>
+<span class="sd">        :type settings: dict</span>
+<span class="sd">        :type event_filter: list or other iterable</span>
+<span class="sd">        :type n_start_events: int</span>
+<span class="sd">        :type emb_type: str</span>
+<span class="sd">        :type ngram_range: tuple[int]</span>
+<span class="sd">        :type emb_dims: int</span>
+<span class="sd">        :type embedder: model or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target_event</span><span class="p">,</span> <span class="n">event_filter</span><span class="p">,</span> <span class="n">n_start_events</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_type</span> <span class="o">=</span> <span class="n">emb_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="o">=</span> <span class="n">embedder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ngram_range</span> <span class="o">=</span> <span class="n">ngram_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dims</span> <span class="o">=</span> <span class="n">emb_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roc_auc_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">average_precision_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roc_c</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prec_rec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">embedder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_vec</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_vec</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_get_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_vec</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_vectors</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_type</span> <span class="o">==</span> <span class="s1">&#39;tf-idf&#39;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+            <span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ngram_range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_vec</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">event_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_start_events</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">event_filter</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_timestamp&#39;</span><span class="p">)</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">_str_agg</span><span class="p">)</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">target_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">train</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">target_event</span><span class="p">)</span>
+            <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_start_events</span><span class="p">:</span>
+            <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="n">n_start_events</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">train</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+        <span class="n">x_train_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_vectors</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+        <span class="n">x_test_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_vectors</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x_train_vec</span><span class="p">,</span> <span class="n">x_test_vec</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test_vec</span><span class="p">,</span> <span class="n">y_test</span><span class="p">):</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x_test_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roc_auc_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">average_precision_score</span> <span class="o">=</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ROC-AUC: </span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PR-AUC: </span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">average_precision_score</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roc_c</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prec_rec</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Model.fit_model"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.fit_model">[docs]</a>    <span class="k">def</span> <span class="nf">fit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;logit&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fits classifier</span>
+
+<span class="sd">        :param model_type: type of model (now only logit is supported)</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :type model_type: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_type</span> <span class="o">=</span> <span class="n">model_type</span>
+        <span class="n">x_train_vec</span><span class="p">,</span> <span class="n">x_test_vec</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;logit&#39;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+            <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">)</span>
+            <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train_vec</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">x_test_vec</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.predict_proba"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts probability of sample</span>
+
+<span class="sd">        :param sample: sample of users vectorized tracks (e.g. with `tf-idf` transform)</span>
+<span class="sd">        :return: probabilities of different classes as list of</span>
+<span class="sd">            `[not target_event probability, target_event probability]`</span>
+<span class="sd">        :type sample: np.ndarray or pd.DataFrame</span>
+<span class="sd">        :rtype: np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.build_important_track"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.build_important_track">[docs]</a>    <span class="k">def</span> <span class="nf">build_important_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the most important tracks for definition of target_event</span>
+
+<span class="sd">        :return: most important edges in graph</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_type</span> <span class="o">==</span> <span class="s1">&#39;logit&#39;</span><span class="p">:</span>
+            <span class="n">imp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Sorry, but only logit available in model type&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_type</span> <span class="o">==</span> <span class="s1">&#39;tf-idf&#39;</span><span class="p">:</span>
+            <span class="n">imp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">imp</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">imp</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)):</span>
+                    <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">j</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="n">k</span><span class="p">]])</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_tsne</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MulticoreTSNE</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Model.plot_projections"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.plot_projections">[docs]</a>    <span class="k">def</span> <span class="nf">plot_projections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots tsne projection of users trajectories</span>
+
+<span class="sd">        :param sample: sample of trajectories</span>
+<span class="sd">        :param target: by which column data should be splitted</span>
+<span class="sd">            (if target is None then probabilities of `target_event` is highlighted)</span>
+<span class="sd">        :param ids: list of user_ids for visualization in plot</span>
+<span class="sd">        :type sample: np.ndarray of pd.DataFrame</span>
+<span class="sd">        :type target: str</span>
+<span class="sd">        :type ids: list or other iterable</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sample</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot_proj_sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot_proj_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_plot_proj_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">pre_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_vectors</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tsne</span><span class="p">(</span><span class="n">pre_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_tsne</span> <span class="o">=</span> <span class="n">vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tsne_sample</span> <span class="o">=</span> <span class="n">sample</span>
+        <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tsne_users</span> <span class="o">=</span> <span class="n">ids</span>
+
+        <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;user_id: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+                <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="n">vec</span><span class="p">[</span><span class="n">target</span> <span class="o">==</span> <span class="n">i</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="n">y</span><span class="o">=</span><span class="n">vec</span><span class="p">[</span><span class="n">target</span> <span class="o">==</span> <span class="n">i</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
+                        <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="n">target</span> <span class="o">==</span> <span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">txt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">txt</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">pre_vec</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">txt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="s1">&#39;,</span><span class="se">\n</span><span class="s1"> prob: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">probs</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prob: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
+
+            <span class="n">figs</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">vec</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">vec</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span>
+                    <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;YlGnBu&#39;</span><span class="p">,</span>
+                    <span class="n">showscale</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">txt</span><span class="p">,</span> <span class="p">)]</span>
+
+        <span class="n">py</span><span class="o">.</span><span class="n">init_notebook_mode</span><span class="p">()</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">figs</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;tsne_</span><span class="si">{}</span><span class="s1">.html&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H_%M_%S_</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)))</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figs</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">auto_open</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_data_from_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox</span><span class="p">):</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">up</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">bot</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_tsne</span>
+        <span class="n">fil</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">up</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">bot</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">res</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">left</span><span class="p">)</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tsne_users</span><span class="p">[</span><span class="n">fil</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="Model.plot_cluster_track"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.plot_cluster_track">[docs]</a>    <span class="k">def</span> <span class="nf">plot_cluster_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots graph for users in selected area</span>
+
+<span class="sd">        :param bbox: coordinates of top-left and bottom-right angles of area</span>
+<span class="sd">        :type bbox: List[List[float]]</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_from_plot</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="n">data_agg</span> <span class="o">=</span> <span class="n">get_all_agg</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;trans_count&#39;</span><span class="p">])</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">data_agg</span><span class="p">,</span> <span class="s1">&#39;trans_count&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;export_folder&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_folder</span><span class="p">})</span></div>
+
+    <span class="k">def</span> <span class="nf">_check_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_folder</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Model.plot"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.model.Model.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot metrics of model</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roc_c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">roc_c</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;ROC curve&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prec_rec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">prec_rec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Precision-Recall curve&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;scores </span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

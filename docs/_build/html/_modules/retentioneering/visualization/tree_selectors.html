@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.visualization.tree_selectors &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.visualization.tree_selectors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.visualization.tree_selectors</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">display</span>
+
+<span class="n">_end</span> <span class="o">=</span> <span class="s1">&#39;_end_&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="n">current_dict</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+            <span class="n">current_dict</span> <span class="o">=</span> <span class="n">current_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">current_dict</span><span class="p">[</span><span class="n">_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="k">def</span> <span class="nf">_add_checkbox</span><span class="p">(</span><span class="n">cur_dict</span><span class="p">,</span> <span class="n">cur_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">_end</span> <span class="o">=</span> <span class="s1">&#39;_end_&#39;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cur_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">_end</span><span class="p">:</span>
+            <span class="n">cur_prefix</span> <span class="o">+=</span> <span class="s1">&#39;-0&#39;</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            &lt;li class=&quot;last&quot;&gt;</span>
+<span class="s1">                &lt;input type=&quot;checkbox&quot; name=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; id=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; </span><span class="si">{is_check}</span><span class="s1">&gt;</span>
+<span class="s1">                &lt;label for=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; class=&quot;no-children custom-</span><span class="si">{is_check}</span><span class="s1">&quot;&gt;</span><span class="si">{check_name}</span><span class="s1">&lt;/label&gt;</span>
+<span class="s1">            &lt;/li&gt;</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">check_id</span><span class="o">=</span><span class="n">cur_prefix</span><span class="p">,</span> <span class="n">check_name</span><span class="o">=</span><span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                       <span class="n">is_check</span><span class="o">=</span><span class="s1">&#39;checked&#39;</span> <span class="k">if</span> <span class="n">is_checked</span> <span class="k">else</span> <span class="s1">&#39;unchecked&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cur_prefix</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">if</span> <span class="n">cur_prefix</span> <span class="k">else</span> <span class="n">key</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            &lt;li&gt;</span>
+<span class="s1">                &lt;input type=&quot;checkbox&quot; name=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; id=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; </span><span class="si">{is_check}</span><span class="s1">&gt;</span>
+<span class="s1">                &lt;label for=&quot;</span><span class="si">{check_id}</span><span class="s1">&quot; class=&quot;custom-</span><span class="si">{is_check}</span><span class="s1">&quot;&gt;</span><span class="si">{check_name}</span><span class="s1">&lt;/label&gt;</span>
+<span class="s1">                &lt;ul&gt;</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">check_id</span><span class="o">=</span><span class="n">cur_prefix</span><span class="p">,</span> <span class="n">check_name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                       <span class="n">is_check</span><span class="o">=</span><span class="s1">&#39;checked&#39;</span> <span class="k">if</span> <span class="n">is_checked</span> <span class="k">else</span> <span class="s1">&#39;unchecked&#39;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">_add_checkbox</span><span class="p">(</span><span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">cur_prefix</span><span class="o">=</span><span class="n">cur_prefix</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="n">is_checked</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                &lt;/ul&gt;</span>
+<span class="s1">            &lt;/li&gt;</span>
+<span class="s1">            &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+
+<div class="viewcode-block" id="print_checkboxes"><a class="viewcode-back" href="../../../retentioneering.visualization.html#retentioneering.visualization.tree_selectors.print_checkboxes">[docs]</a><span class="k">def</span> <span class="nf">print_checkboxes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">checkbox_id</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    &lt;!DOCTYPE html&gt;</span>
+<span class="s1">    &lt;html&gt;</span>
+
+<span class="s1">    &lt;head&gt;</span>
+<span class="s1">      &lt;meta charset=&#39;UTF-8&#39;&gt;</span>
+
+<span class="s1">    &lt;script&gt;</span>
+<span class="s1">    $(function() {</span>
+
+<span class="s1">      $(&#39;input[type=&quot;checkbox&quot;]&#39;).change(checkboxChanged);</span>
+
+<span class="s1">      function checkboxChanged() {</span>
+<span class="s1">        var $this = $(this),</span>
+<span class="s1">            checked = $this.prop(&quot;checked&quot;),</span>
+<span class="s1">            container = $this.parent(),</span>
+<span class="s1">            siblings = container.siblings();</span>
+
+<span class="s1">        container.find(&#39;input[type=&quot;checkbox&quot;]&#39;)</span>
+<span class="s1">        .prop({</span>
+<span class="s1">            indeterminate: false,</span>
+<span class="s1">            checked: checked</span>
+<span class="s1">        })</span>
+<span class="s1">        .siblings(&#39;label&#39;)</span>
+<span class="s1">        .removeClass(&#39;custom-checked custom-unchecked custom-indeterminate&#39;)</span>
+<span class="s1">        .addClass(checked ? &#39;custom-checked&#39; : &#39;custom-unchecked&#39;);</span>
+
+<span class="s1">        checkSiblings(container, checked);</span>
+<span class="s1">      }</span>
+
+<span class="s1">      function checkSiblings($el, checked) {</span>
+<span class="s1">        var parent = $el.parent().parent(),</span>
+<span class="s1">            all = true,</span>
+<span class="s1">            indeterminate = false;</span>
+
+<span class="s1">        $el.siblings().each(function() {</span>
+<span class="s1">          return all = ($(this).children(&#39;input[type=&quot;checkbox&quot;]&#39;).prop(&quot;checked&quot;) === checked);</span>
+<span class="s1">        });</span>
+
+<span class="s1">        if (all &amp;&amp; checked) {</span>
+<span class="s1">          parent.children(&#39;input[type=&quot;checkbox&quot;]&#39;)</span>
+<span class="s1">          .prop({</span>
+<span class="s1">              indeterminate: false,</span>
+<span class="s1">              checked: checked</span>
+<span class="s1">          })</span>
+<span class="s1">          .siblings(&#39;label&#39;)</span>
+<span class="s1">          .removeClass(&#39;custom-checked custom-unchecked custom-indeterminate&#39;)</span>
+<span class="s1">          .addClass(checked ? &#39;custom-checked&#39; : &#39;custom-unchecked&#39;);</span>
+
+<span class="s1">          checkSiblings(parent, checked);</span>
+<span class="s1">        } </span>
+<span class="s1">        else if (all &amp;&amp; !checked) {</span>
+<span class="s1">          indeterminate = parent.find(&#39;input[type=&quot;checkbox&quot;]:checked&#39;).length &gt; 0;</span>
+
+<span class="s1">          parent.children(&#39;input[type=&quot;checkbox&quot;]&#39;)</span>
+<span class="s1">          .prop(&quot;checked&quot;, checked)</span>
+<span class="s1">          .prop(&quot;indeterminate&quot;, indeterminate)</span>
+<span class="s1">          .siblings(&#39;label&#39;)</span>
+<span class="s1">          .removeClass(&#39;custom-checked custom-unchecked custom-indeterminate&#39;)</span>
+<span class="s1">          .addClass(indeterminate ? &#39;custom-indeterminate&#39; : (checked ? &#39;custom-checked&#39; : &#39;custom-unchecked&#39;));</span>
+
+<span class="s1">          checkSiblings(parent, checked);</span>
+<span class="s1">        } </span>
+<span class="s1">        else {</span>
+<span class="s1">          $el.parents(&quot;li&quot;).children(&#39;input[type=&quot;checkbox&quot;]&#39;)</span>
+<span class="s1">          .prop({</span>
+<span class="s1">              indeterminate: true,</span>
+<span class="s1">              checked: false</span>
+<span class="s1">          })</span>
+<span class="s1">          .siblings(&#39;label&#39;)</span>
+<span class="s1">          .removeClass(&#39;custom-checked custom-unchecked custom-indeterminate&#39;)</span>
+<span class="s1">          .addClass(&#39;custom-indeterminate&#39;);</span>
+<span class="s1">        }</span>
+<span class="s1">      }</span>
+<span class="s1">    });</span>
+<span class="s1">    function buttonPressed() {</span>
+<span class="s1">        var result = [];</span>
+<span class="s1">        $(&quot;ul.treeview&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">checkbox_id</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;).find(&#39;label[class=&quot;no-children custom-checked&quot;]&#39;).each(function () {</span>
+<span class="s1">            result.push($(this).context.textContent);</span>
+<span class="s1">        });</span>
+<span class="s1">        IPython.notebook.kernel.execute(&#39;result_filter=&#39;+JSON.stringify(result));</span>
+<span class="s1">    }</span>
+<span class="s1">    buttonPressed()</span>
+<span class="s1">    &lt;/script&gt;</span>
+
+<span class="s1">    &lt;/head&gt;</span>
+
+<span class="s1">    &lt;body&gt;</span>
+
+<span class="s1">    &lt;div id=&quot;page-wrap&quot;&gt;</span>
+
+<span class="s1">         &lt;h2&gt;Graph event filter&lt;/h2&gt;</span>
+
+<span class="s1">         &lt;ul class=&quot;treeview&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">checkbox_id</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;&gt;</span>
+<span class="s1">    &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">_add_checkbox</span><span class="p">(</span><span class="n">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="n">is_checked</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;        </span>
+<span class="s1">        &lt;/ul&gt;</span>
+
+<span class="s1">      &lt;/div&gt;</span>
+
+<span class="s1">      &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js&quot;&gt;&lt;/script&gt;</span>
+<span class="s1">      &lt;button onclick=&quot;buttonPressed()&quot;&gt;Apply filters&lt;/button&gt;</span>
+<span class="s1">    &lt;/body&gt;</span>
+
+
+<span class="s1">    &lt;/html&gt;&#39;&#39;&#39;</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

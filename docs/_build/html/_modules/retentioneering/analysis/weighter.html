@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.analysis.weighter &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.analysis.weighter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.analysis.weighter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+
+
+<span class="k">def</span> <span class="nf">_calc_weights</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">target_mechanics</span><span class="p">,</span> <span class="n">mechanics_events</span><span class="p">):</span>
+    <span class="n">counts</span><span class="p">[</span><span class="n">target_mechanics</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">mechanics_events</span><span class="p">)</span> <span class="o">*</span> <span class="n">counts</span><span class="o">.</span><span class="n">event_count</span>
+    <span class="k">return</span> <span class="n">counts</span>
+
+
+<span class="k">def</span> <span class="nf">_diff</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_mech_events</span><span class="p">(</span><span class="n">mechanics_events</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="n">sub_mech</span> <span class="o">=</span> <span class="n">mechanics_events</span><span class="p">[</span><span class="n">mechanics_events</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mode</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sub_mech</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;mechanics&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mex</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;mechanics&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">_diff</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">mex</span>
+
+
+<div class="viewcode-block" id="calc_all_norm_mech"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.weighter.calc_all_norm_mech">[docs]</a><span class="k">def</span> <span class="nf">calc_all_norm_mech</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mechanics_events</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="n">duration_thresh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">len_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates weights of different mechanics in users` sessions</span>
+<span class="sd">    :param data: clickstream data with columns `session` (rank of user`s session)</span>
+<span class="sd">    :param mechanics_events: mapping of mechanic and its target events</span>
+<span class="sd">    :param mode: if `session` then calculates weights over session, if `full` over full users story</span>
+<span class="sd">    :param duration_thresh: duration in time threshold for technical (ping) session deletion</span>
+<span class="sd">    :param len_thresh: number of events in session threshold for technical (ping) session deletion</span>
+<span class="sd">    :return: session description with weights of each mechanic</span>
+
+<span class="sd">    :type data: pd.DataFrame</span>
+<span class="sd">    :type mechanics_events: Dict[str, List[str]]</span>
+<span class="sd">    :type mode: str</span>
+<span class="sd">    :type duration_thresh: float</span>
+<span class="sd">    :type len_thresh: int</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;event_count&#39;</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">mex</span> <span class="o">=</span> <span class="n">_get_mech_events</span><span class="p">(</span><span class="n">mechanics_events</span><span class="o">=</span><span class="n">mechanics_events</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">target_mechanics</span><span class="p">,</span> <span class="n">mechanics_events</span> <span class="ow">in</span> <span class="n">mex</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">_calc_weights</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">target_mechanics</span><span class="p">,</span> <span class="n">mechanics_events</span><span class="p">)</span>
+
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;session_end&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;session_start&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span>
+
+    
+    <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;session_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">session_end</span> <span class="o">-</span> <span class="n">counts</span><span class="o">.</span><span class="n">session_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">duration_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">counts</span><span class="o">.</span><span class="n">session_duration</span> <span class="o">&gt;=</span> <span class="n">duration_thresh</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">len_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">counts</span><span class="o">.</span><span class="n">event_count</span> <span class="o">&gt;=</span> <span class="n">len_thresh</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">mex</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">counts</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">mex</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">mex</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">counts</span></div>
+
+
+<span class="k">def</span> <span class="nf">_calc_stats</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;is_target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">event_name</span> <span class="o">==</span> <span class="n">target</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;is_target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_ses&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;is_target&#39;</span><span class="p">:</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span>
+    <span class="n">grouped</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">is_target</span> <span class="o">/</span> <span class="n">grouped</span><span class="o">.</span><span class="n">event_name</span>
+    <span class="k">return</span> <span class="n">grouped</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_anom</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;top&#39;</span><span class="p">:</span>
+        <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="p">]</span><span class="o">.</span><span class="n">user_ses</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">user_ses</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span><span class="o">.</span><span class="n">event_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">freq</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">df</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">user_ses</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">user_ses</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">_top_event_loosers</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_top_event_loosers</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">tmp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">nuq</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_ses&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">nuq</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">nuq</span><span class="p">[</span><span class="n">nuq</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">tmp</span><span class="o">.</span><span class="n">user_ses</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span><span class="o">.</span><span class="n">event_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_clean_event_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">session_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">session_mode</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_ses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;session&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_ses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">_calc_stats</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">_get_anom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">los</span> <span class="o">=</span> <span class="n">_get_anom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;los&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">top</span> <span class="o">-</span> <span class="n">los</span><span class="p">),</span> <span class="n">top</span><span class="p">,</span> <span class="n">los</span>
+
+
+<span class="k">def</span> <span class="nf">_get_df_results</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">los</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="n">res_df_top</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">top</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">])</span>
+    <span class="n">res_df_top</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">res_df_los</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">los</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">])</span>
+    <span class="n">res_df_los</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">res_df</span> <span class="o">=</span> <span class="n">res_df_top</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_df_los</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">res_df</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span>
+    <span class="k">return</span> <span class="n">res_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_build_df</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">mex</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;session&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">good</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">los</span> <span class="o">=</span> <span class="n">_get_clean_event_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">session_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_get_df_results</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">los</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">)</span>
+    <span class="n">good</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">los</span> <span class="o">=</span> <span class="n">_get_clean_event_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">session_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_df_results</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">los</span><span class="p">,</span> <span class="s1">&#39;full&#39;</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;mechanics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mex</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="mechanics_enrichment"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.weighter.mechanics_enrichment">[docs]</a><span class="k">def</span> <span class="nf">mechanics_enrichment</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mechanics</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enrich list of events specific for mechanic</span>
+
+<span class="sd">    :param data: clickstream data with columns `session` (rank of user`s session)</span>
+<span class="sd">    :param mechanics: table with description in form `[&#39;id&#39;, &#39;Events&#39;]`,</span>
+<span class="sd">        where `id` is mechanic name and `Events` contains target events specific for that `mechanics`</span>
+<span class="sd">    :param q: quantile for frequency of target events</span>
+<span class="sd">    :param q2: quantile for frequency of target events of other mechanic</span>
+<span class="sd">    :return: mapping of mechanic and its target events</span>
+
+<span class="sd">    :param data: pd.DataFrame</span>
+<span class="sd">    :param mechanics: pd.DataFrame</span>
+<span class="sd">    :param q: float in interval (0, 1)</span>
+<span class="sd">    :param q2: float in interval (0, 1)</span>
+<span class="sd">    :rtype: Dict[str, List[str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mechanics_map</span> <span class="o">=</span> <span class="n">mechanics</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Events</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">mechanics_events</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">mechanics_map</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">mechanics_map</span><span class="p">)):</span>
+        <span class="n">mechanics_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_df</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">))</span>
+
+    <span class="n">mechanics_events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">mechanics_events</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mechanics_events</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

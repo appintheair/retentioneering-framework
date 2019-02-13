@@ -1,0 +1,747 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.analysis.utils &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.analysis.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.analysis.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">CountVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">DBSCAN</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">NearestNeighbors</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+
+<span class="k">def</span> <span class="nf">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;export_folder&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">settings</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;./experiments/&#39;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./experiments/&#39;</span><span class="p">)</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;./experiments/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;settings_</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">settings</span>
+
+
+<span class="k">def</span> <span class="nf">_str_agg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="prepare_dataset"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.prepare_dataset">[docs]</a><span class="k">def</span> <span class="nf">prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target_event</span><span class="p">,</span> <span class="n">event_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_start_events</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares data for classifier inference</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param target_event: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">    :param event_filter: list of events that is wanted to use in analysis</span>
+<span class="sd">    :param n_start_events: length of users trajectory from start</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type target_event: str</span>
+<span class="sd">    :type event_filter: list or other iterable</span>
+<span class="sd">    :return: prepared data for inference (glued user events in one trajectory)</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">event_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">event_filter</span><span class="p">)]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_timestamp&#39;</span><span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">_str_agg</span><span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="n">train</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">target_event</span><span class="p">)</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n_start_events</span><span class="p">:</span>
+        <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="n">n_start_events</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">train</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">train</span></div>
+
+
+<div class="viewcode-block" id="get_agg"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_agg">[docs]</a><span class="k">def</span> <span class="nf">get_agg</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">agg_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create aggregates (weights) by time of graph nodes</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param agg_type: type of aggregate, should be written in form `&#39;name&#39; + &#39;_&#39; + aggregate type`</span>
+<span class="sd">        (e.g. `trans_count` where `trans` is the name and `count` is aggragete type).</span>
+<span class="sd">        Aggragate types can be: max, min, mean, median, std, count. For greater list, please,</span>
+<span class="sd">        check the pd.DataFrame.groupby().agg() documentation</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type agg_type: str</span>
+<span class="sd">    :return: table with aggregates by nodes of graph</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">agg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;next_event&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">agg</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="s1">&#39;time_to_next_event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">agg</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;next_event&#39;</span><span class="p">,</span> <span class="n">agg_type</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">agg</span></div>
+
+
+<div class="viewcode-block" id="get_shift"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_shift">[docs]</a><span class="k">def</span> <span class="nf">get_shift</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates `next_event` and `time_to_next_event`</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :return: source table with additional columns</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_timestamp&#39;</span><span class="p">])</span> \
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;next_event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">event_name</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;time_to_next_event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shift</span><span class="o">.</span><span class="n">event_timestamp</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">event_timestamp</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">next_event</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="get_all_agg"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_all_agg">[docs]</a><span class="k">def</span> <span class="nf">get_all_agg</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">agg_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create aggregates (weights) by time of graph nodes from agg_list</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param agg_list: list of needed aggregates, each aggregate should be written in form `&#39;name&#39; + &#39;_&#39; + aggregate type`</span>
+<span class="sd">        (e.g. `trans_count` where `trans` is the name and `count` is aggragete type).</span>
+<span class="sd">        Aggragate types can be: max, min, mean, median, std, count. For greater list, please,</span>
+<span class="sd">        check the pd.DataFrame.groupby().agg() documentation</span>
+<span class="sd">    :return: table with aggregates by nodes of graph</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type agg_list: List[str]</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;next_event&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">get_shift</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">df_result</span> <span class="o">=</span> <span class="n">get_agg</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">agg_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">agg</span> <span class="ow">in</span> <span class="n">agg_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">df_result</span><span class="p">[</span><span class="n">agg</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_agg</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">agg</span><span class="p">)[</span><span class="n">agg</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df_result</span></div>
+
+
+<div class="viewcode-block" id="get_adjacency"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_adjacency">[docs]</a><span class="k">def</span> <span class="nf">get_adjacency</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">adj_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates graph adjacency matrix from table with aggregates by nodes</span>
+
+<span class="sd">    :param df: table with aggregates (from retentioneering.analysis.get_all_agg function)</span>
+<span class="sd">    :param adj_type: name of col for weighting graph nodes (column name from df)</span>
+<span class="sd">    :return: adjacency matrix</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type adj_type: str</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">event_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">event_set</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">next_event</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">event_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">event_set</span><span class="p">)</span>
+    <span class="n">event_to_id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">event_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">event_num</span><span class="p">)))</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">event_to_id</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">next_event</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">next_event</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">event_to_id</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;count&#39;</span> <span class="ow">in</span> <span class="n">adj_type</span><span class="p">:</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">event_num</span><span class="p">,</span> <span class="n">event_num</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">event_num</span><span class="p">,</span> <span class="n">event_num</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">adj</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">event_name</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">next_event</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">adj_type</span><span class="p">]</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">event_to_id</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">event_to_id</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="n">adj</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">adj</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adj</span></div>
+
+
+<div class="viewcode-block" id="get_accums"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_accums">[docs]</a><span class="k">def</span> <span class="nf">get_accums</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">max_rank</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates Accumulator Variables</span>
+
+<span class="sd">    :param agg: Counts of events by step</span>
+<span class="sd">    :param name: Name of Accumulator</span>
+<span class="sd">    :param max_rank: Number of steps in pivot</span>
+<span class="sd">    :return: Accumulator Variable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lost</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">])</span> \
+        <span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agg</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">agg</span><span class="o">.</span><span class="n">event_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]])</span>
+
+    <span class="n">lost</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">lost</span> <span class="o">=</span> <span class="n">lost</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_rank&#39;</span><span class="p">)</span>
+
+    <span class="n">missed_rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lost</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">event_rank</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span><span class="p">):</span>
+            <span class="n">missed_rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">lost</span> <span class="o">=</span> <span class="n">lost</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">missed_rows</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]))</span>
+    <span class="n">lost</span> <span class="o">=</span> <span class="n">lost</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_rank&#39;</span><span class="p">)</span>
+    <span class="n">lost</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">lost</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">lost</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">max_rank</span><span class="p">:</span>
+        <span class="n">lost</span> <span class="o">=</span> <span class="n">lost</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="n">lost</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lost</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]),</span>
+            <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="n">lost</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Accumulated &#39;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">lost</span></div>
+
+
+<div class="viewcode-block" id="get_desc_table"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_desc_table">[docs]</a><span class="k">def</span> <span class="nf">get_desc_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_event_list</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">]),</span> <span class="n">max_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds distribution of events over steps</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param target_event_list: list of target events</span>
+<span class="sd">    :param max_steps:</span>
+<span class="sd">    :param plot: if True then heatmap is plotted</span>
+<span class="sd">    :param plot_name:</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type target_event_list: list</span>
+<span class="sd">    :type max_steps: int</span>
+<span class="sd">    :type plot: bool</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :return: Pivot table with distribution of events over steps</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create ranks and count</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">max_steps</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_steps</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="n">agg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">agg</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]</span>
+    <span class="n">tot_cnt</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="n">agg</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># add accumulated rows</span>
+    <span class="n">max_rank</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="s1">&#39;event_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target_event_list</span><span class="p">:</span>
+        <span class="n">agg</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_accums</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">max_rank</span><span class="p">),</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># build pivot</span>
+    <span class="n">agg</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">tot_cnt</span>
+    <span class="n">piv</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;event_rank&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">piv</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">piv</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">piv</span> <span class="o">=</span> <span class="n">piv</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_steps</span><span class="p">:</span>
+        <span class="n">piv</span> <span class="o">=</span> <span class="n">piv</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">piv</span><span class="o">.</span><span class="n">columns</span> <span class="o">&lt;=</span> <span class="n">max_steps</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="c1"># create folder for experiment if doesn&#39;t exists</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="n">export_folder</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">heatmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">piv</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlGnBu&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_name</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;desc_table_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;desc_table_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">heatmap</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">piv</span></div>
+
+
+<div class="viewcode-block" id="get_diff"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.get_diff">[docs]</a><span class="k">def</span> <span class="nf">get_diff</span><span class="p">(</span><span class="n">df_old</span><span class="p">,</span> <span class="n">df_new</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">precalc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets difference between two groups</span>
+
+<span class="sd">    :param df_old: Raw clickstream or calculated desc table of last version</span>
+<span class="sd">    :param df_new:  Raw clickstream or calculated desc table of new version</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param precalc: If True then precalculated desc tables is used</span>
+<span class="sd">    :param plot: if True then heatmap is plotted</span>
+<span class="sd">    :param plot_name:</span>
+<span class="sd">    :type df_old: pd.DataFrame</span>
+<span class="sd">    :type df_new: pd.DataFrame</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type precalc: bool</span>
+<span class="sd">    :type plot: bool</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :return: Table of differences between two versions</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">precalc</span><span class="p">:</span>
+        <span class="n">desc_new</span> <span class="o">=</span> <span class="n">df_new</span>
+        <span class="n">desc_old</span> <span class="o">=</span> <span class="n">df_old</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desc_old</span> <span class="o">=</span> <span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_old</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">desc_new</span> <span class="o">=</span> <span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_new</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">old_id</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">desc_old</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">new_id</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">desc_new</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">old_id</span> <span class="o">!=</span> <span class="n">new_id</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">new_id</span> <span class="o">-</span> <span class="n">old_id</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">desc_old</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">desc_old</span> <span class="o">=</span> <span class="n">desc_old</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">old_id</span> <span class="o">-</span> <span class="n">new_id</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">desc_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">desc_new</span> <span class="o">=</span> <span class="n">desc_new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">max_old</span> <span class="o">=</span> <span class="n">desc_old</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">max_new</span> <span class="o">=</span> <span class="n">desc_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">max_old</span> <span class="o">&lt;</span> <span class="n">max_new</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_old</span><span class="p">,</span> <span class="n">max_new</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">desc_old</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_old</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">max_old</span> <span class="o">&gt;</span> <span class="n">max_new</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_new</span><span class="p">,</span> <span class="n">max_old</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">desc_new</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_new</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">desc_new</span> <span class="o">-</span> <span class="n">desc_old</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="n">export_folder</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">heatmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlGnBu&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_name</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;desc_table_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;desc_table_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">heatmap</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">diff</span></div>
+
+
+<div class="viewcode-block" id="plot_graph_python"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.plot_graph_python">[docs]</a><span class="k">def</span> <span class="nf">plot_graph_python</span><span class="p">(</span><span class="n">df_agg</span><span class="p">,</span> <span class="n">agg_type</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">random_layout</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visualize trajectories from aggregated tables (with python)</span>
+
+<span class="sd">    :param df_agg: table with aggregates (from retentioneering.analysis.get_all_agg function)</span>
+<span class="sd">    :param agg_type: name of col for weighting graph nodes (column name from df)</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param layout:</span>
+<span class="sd">    :param plot_name: name of file with graph plot</span>
+<span class="sd">    :type df_agg: pd.DataFrame</span>
+<span class="sd">    :type agg_type: str</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type layout: func</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Please use retentioneering.visulization.plot.plot_graph instead&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">df_agg</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;next_event&#39;</span><span class="p">,</span> <span class="n">agg_type</span><span class="p">]]</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="n">width</span> <span class="o">=</span> <span class="p">[</span><span class="n">G</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">width</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">width</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="o">-</span> <span class="n">width</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">width</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">width</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">layout</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.03</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pos</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+    <span class="n">export_folder</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">plot_name</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;graphvis_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_name</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;graphvis_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_frequency_map"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.plot_frequency_map">[docs]</a><span class="k">def</span> <span class="nf">plot_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">]),</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots frequency histogram and heatmap of users` event count</span>
+
+<span class="sd">    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param settings: experiment config (can be empty dict here)</span>
+<span class="sd">    :param target_events: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">    :param plot_name: name of file with graph plot</span>
+<span class="sd">    :return: table with counts of events for users</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type target_events: List[str]</span>
+<span class="sd">    :type plot_name: str</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">cv</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_events</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">)</span>
+    <span class="n">nodes_hist</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span>
+                            <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_timestamp&#39;</span><span class="p">,</span>
+                                                                                <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="n">sorted_cols</span> <span class="o">=</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="p">[</span><span class="o">~</span><span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">sorted_cols</span><span class="p">]</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">nodes_hist</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;YlGnBu&#39;</span><span class="p">)</span>
+    <span class="n">bar</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+    <span class="n">export_folder</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;export_folder&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">plot_name</span><span class="p">:</span>
+        <span class="n">barname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;bar_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_name</span><span class="p">))</span>
+        <span class="n">heatname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;countmap_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot_name</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">barname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;bar_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">heatname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_folder</span><span class="p">,</span> <span class="s1">&#39;countmap_</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">bar</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">barname</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+    <span class="n">heatmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlGnBu&quot;</span><span class="p">)</span>
+    <span class="n">heatmap</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">heatname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="plot_clusters"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.plot_clusters">[docs]</a><span class="k">def</span> <span class="nf">plot_clusters</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">countmap</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">]),</span> <span class="n">n_clusters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_cnt</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                  <span class="n">height</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot pie-chart with distribution of target events in clusters</span>
+
+<span class="sd">    :param data: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :param countmap: result of retentioneering.analysis.utils.plot_frequency_map</span>
+<span class="sd">    :param target_events: name of event which signalize target function</span>
+<span class="sd">            (e.g. for prediction of lost users it&#39;ll be `lost`)</span>
+<span class="sd">    :param n_clusters: supposed number of clusters</span>
+<span class="sd">    :param plot_cnt: number of plots for output</span>
+<span class="sd">    :param width: width of plot</span>
+<span class="sd">    :param height: height of plot</span>
+
+<span class="sd">    :type data: pd.DataFrame</span>
+<span class="sd">    :type countmap: pd.DataFrame</span>
+<span class="sd">    :type target_events: List[str]</span>
+<span class="sd">    :type n_clusters: int</span>
+<span class="sd">    :type plot_cnt: int</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :type height: float</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_clusters</span><span class="p">:</span>
+        <span class="n">clusterer</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">countmap</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">countmap</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+        <span class="n">clusterer</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="n">clusterer</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">countmap</span><span class="p">)</span>
+    <span class="n">cl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">])</span>
+    <span class="n">cl</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">main_classes</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span>
+                              <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span>
+                                                                  <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">plot_cnt</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">main_classes</span><span class="p">:</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">countmap</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">group</span><span class="p">)]</span>
+        <span class="n">sz</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">target_events</span><span class="p">:</span>
+            <span class="n">sz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">tmp</span><span class="o">.</span><span class="n">event_name</span> <span class="o">==</span> <span class="n">event</span><span class="p">]</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">nunique</span><span class="p">())</span>
+        <span class="n">sizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">plot_cnt</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">(</span><span class="n">plot_cnt</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sizes</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">plot_cnt</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">],</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.1f%%</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Class </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="mi">2</span><span class="p">][</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">],</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.1f%%</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="mi">2</span><span class="p">][</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Class </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="filter_welcome"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.filter_welcome">[docs]</a><span class="k">def</span> <span class="nf">filter_welcome</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter for truncated welcome visualization</span>
+
+<span class="sd">    :param df:data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :return: filtered for users events dataset</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">passed</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;newFlight&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;feed&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;tabbar&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;myFlights&#39;</span><span class="p">])]</span>
+    <span class="n">myfligts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span> <span class="o">==</span> <span class="s1">&#39;screen_view&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">event_params_value_string_value</span> <span class="o">==</span> <span class="s1">&#39;myFlights&#39;</span><span class="p">)]</span>
+    <span class="n">myfligts</span> <span class="o">=</span> <span class="n">myfligts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">myfligts</span> <span class="o">=</span> <span class="n">myfligts</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_timestamp&#39;</span><span class="p">])</span>
+    <span class="n">passed</span> <span class="o">=</span> <span class="n">myfligts</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">passed</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="s1">&#39;passed&#39;</span>
+
+    <span class="n">lost</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">passed</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">)]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">lost</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="s1">&#39;lost&#39;</span>
+    <span class="n">lost</span><span class="o">.</span><span class="n">event_timestamp</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lost</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prepare_prunned</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="prepare_prunned"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.utils.prepare_prunned">[docs]</a><span class="k">def</span> <span class="nf">prepare_prunned</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter for truncated welcome visualization</span>
+
+<span class="sd">    :param df:data from BQ or your own (clickstream). Should have at least three columns: `event_name`,</span>
+<span class="sd">            `event_timestamp` and `user_pseudo_id`</span>
+<span class="sd">    :type df: pd.DataFrame</span>
+<span class="sd">    :return: filtered for users events dataset</span>
+<span class="sd">    :rtype: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">welcome2event</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s2">&quot;wel&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;2&#39;</span><span class="p">:</span> <span class="s2">&quot;push&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;3&#39;</span><span class="p">:</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;4&#39;</span><span class="p">:</span> <span class="s2">&quot;wallet&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;5&#39;</span><span class="p">:</span> <span class="s2">&quot;import&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;6&#39;</span><span class="p">:</span> <span class="s2">&quot;cal&quot;</span>
+    <span class="p">}</span>
+    <span class="n">rename_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;inactive_users&#39;</span><span class="p">:</span> <span class="s1">&#39;inactive&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;new_users&#39;</span><span class="p">:</span> <span class="s1">&#39;newUsers&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lost&#39;</span><span class="p">:</span> <span class="s1">&#39;lostUser&#39;</span>
+    <span class="p">}</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;welcome_see_screen&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">wel</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">event_params_value_string_value</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">welcome2event</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">wel</span><span class="p">[</span><span class="n">wel</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">])],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">first</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;wel&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">])]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">first</span><span class="p">[</span><span class="n">first</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">wel</span><span class="p">[</span><span class="n">wel</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">first</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="s1">&#39;new_users&#39;</span>
+    <span class="n">first</span><span class="o">.</span><span class="n">event_timestamp</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">wel</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">wel</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rename_dict</span><span class="p">:</span>
+            <span class="n">rename_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="p">})</span>
+    <span class="n">wel</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">wel</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">rename_dict</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wel</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retentioneering.utils.bq_download &mdash; Retentioneering framework 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Retentioneering framework
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html">Download data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/data_preparation.html#prepare-data-for-analysis">Prepare data for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/analysis.html"> Analysis</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.preparing.html">Preparing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../retentioneering.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Retentioneering framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>retentioneering.utils.bq_download</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retentioneering.utils.bq_download</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">retentioneering.utils</span> <span class="k">import</span> <span class="n">queries</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="download_table"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.bq_download.download_table">[docs]</a><span class="k">def</span> <span class="nf">download_table</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">,</span> <span class="n">table_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download table from bigquery</span>
+
+<span class="sd">    :param client: bigquery client</span>
+<span class="sd">    :param dataset_id: target dataset id</span>
+<span class="sd">    :param table_id: target table id</span>
+
+<span class="sd">    :type client: bigquery.Client()</span>
+<span class="sd">    :type dataset_id: str</span>
+<span class="sd">    :type table_id: str</span>
+<span class="sd">    :return: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target_table</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">table_id</span><span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">target_table</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_rows</span><span class="p">(</span><span class="n">target_table</span><span class="p">,</span> <span class="n">selected_fields</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="run_query"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.bq_download.run_query">[docs]</a><span class="k">def</span> <span class="nf">run_query</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">job_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_only_query</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">hide_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress_bar_min_interval</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a query in bigquery and download results</span>
+
+<span class="sd">    :param client: bigquery client</span>
+<span class="sd">    :param query: query to run (it could be string with params)</span>
+<span class="sd">    :param job_config: bigquery client job config</span>
+<span class="sd">    :param group_name: add new column &#39;group_name&#39; with value</span>
+<span class="sd">    :param return_dataframe: if is true then data will be returned as pd.DataFrame, list otherwise</span>
+<span class="sd">    :param return_only_query: return only query string without running</span>
+<span class="sd">    :param hide_progress_bar: hide tqdm progress bar</span>
+<span class="sd">    :param progress_bar_min_interval: min interval of tqdm progress bar in seconds</span>
+<span class="sd">    :param **params: options to pass in query.format function</span>
+
+<span class="sd">    :type client: bigquery.Client()</span>
+<span class="sd">    :type query: str</span>
+<span class="sd">    :type job_config: bigquery.QueryJobConfig()</span>
+<span class="sd">    :type group_name: str or None</span>
+<span class="sd">    :type return_dataframe: bool</span>
+<span class="sd">    :type return_only_query: bool</span>
+<span class="sd">    :type hide_progress_bar: bool</span>
+<span class="sd">    :type progress_bar_min_interval: int</span>
+<span class="sd">    :type **params: keywords</span>
+<span class="sd">    :return: list or pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_only_query</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">query</span>
+    <span class="n">query_results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">job_config</span><span class="o">=</span><span class="n">job_config</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">query_results</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="n">total_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Query complete in </span><span class="si">{}</span><span class="s1"> seconds</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_time</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span>
+    <span class="n">dest_table</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">job_config</span><span class="o">.</span><span class="n">destination</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="n">mininterval</span><span class="o">=</span><span class="n">progress_bar_min_interval</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">dest_table</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span>
+                       <span class="n">disable</span><span class="o">=</span><span class="n">hide_progress_bar</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">group_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">+=</span> <span class="p">[</span><span class="n">group_name</span><span class="p">]</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_dataframe</span><span class="p">:</span>
+        <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dest_table</span><span class="o">.</span><span class="n">schema</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">group_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">col_names</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;group_name&#39;</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">col_names</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="k">def</span> <span class="nf">_prepare_event_filter_query</span><span class="p">(</span><span class="n">event_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table_with_events</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">table_with_events</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">is_in</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">event_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="n">filter_query</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">,</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">event_names</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">is_in</span><span class="p">:</span>
+            <span class="n">filter_query</span> <span class="o">=</span> <span class="s1">&#39;WHERE event_name IN (&#39;</span> <span class="o">+</span> <span class="n">filter_query</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filter_query</span> <span class="o">=</span> <span class="s1">&#39;WHERE event_name = &#39;</span> <span class="o">+</span> <span class="n">filter_query</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filter_query</span> <span class="o">=</span> <span class="s2">&quot;WHERE event_name IN (SELECT string_field_0 FROM </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_with_events</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filter_query</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_app_version_filter_query</span><span class="p">(</span><span class="n">app_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_not_first</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">app_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">app_version_filter</span> <span class="o">=</span> <span class="s2">&quot;app_info.version = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">app_version</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_not_first</span><span class="p">:</span>
+        <span class="n">app_version_filter</span> <span class="o">=</span> <span class="s1">&#39;AND &#39;</span> <span class="o">+</span> <span class="n">app_version_filter</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">app_version_filter</span> <span class="o">=</span> <span class="s1">&#39;WHERE &#39;</span> <span class="o">+</span> <span class="n">app_version_filter</span>
+    <span class="k">return</span> <span class="n">app_version_filter</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_drop_duplicates_flag</span><span class="p">(</span><span class="n">drop_duplicates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">drop_duplicates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;, ROW_NUMBER() OVER (PARTITION BY </span><span class="si">{}</span><span class="s2">) AS row_n&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;tbl1.&#39;</span> <span class="o">+</span> <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">drop_duplicates</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<div class="viewcode-block" id="download_events_multi"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.bq_download.download_events_multi">[docs]</a><span class="k">def</span> <span class="nf">download_events_multi</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">job_config</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_only_query</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate queries from settings, run them in bigquery and download results.</span>
+
+<span class="sd">    :param client: bigquery client</span>
+<span class="sd">    :param job_config: bigquery client job config</span>
+<span class="sd">    :param settings: settings dict</span>
+<span class="sd">    :param return_only_query: return only query string for all queries without running</span>
+<span class="sd">    :param **kwargs: options to pass in download_events function</span>
+<span class="sd">    :type client: bigquery.Client()</span>
+<span class="sd">    :type job_config: bigquery.QueryJobConfig()</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type return_only_query: bool</span>
+<span class="sd">    :type **kwargs: keywords</span>
+<span class="sd">    :return: pd.DataFrame or list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">settings_name</span><span class="p">,</span> <span class="n">settings_config</span> <span class="ow">in</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;sql&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">return_only_query</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">download_events</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">job_config</span><span class="o">=</span><span class="n">job_config</span><span class="p">,</span> <span class="n">return_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">settings</span><span class="o">=</span><span class="n">settings_config</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">settings_name</span><span class="p">,</span>
+                                           <span class="n">return_only_query</span><span class="o">=</span><span class="n">return_only_query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">job_config</span><span class="o">.</span><span class="n">write_disposition</span> <span class="o">=</span> <span class="s2">&quot;WRITE_TRUNCATE&quot;</span>
+                <span class="n">job_config</span><span class="o">.</span><span class="n">destination</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dataset</span><span class="p">(</span><span class="n">settings_config</span><span class="p">[</span><span class="s1">&#39;destination_table&#39;</span><span class="p">][</span><span class="s1">&#39;dataset&#39;</span><span class="p">])</span> \
+                    <span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">settings_config</span><span class="p">[</span><span class="s1">&#39;destination_table&#39;</span><span class="p">][</span><span class="s1">&#39;table&#39;</span><span class="p">])</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">download_events</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">job_config</span><span class="o">=</span><span class="n">job_config</span><span class="p">,</span> <span class="n">return_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">settings</span><span class="o">=</span><span class="n">settings_config</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">settings_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_only_query</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="download_events"><a class="viewcode-back" href="../../../retentioneering.utils.html#retentioneering.utils.bq_download.download_events">[docs]</a><span class="k">def</span> <span class="nf">download_events</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">job_config</span><span class="p">,</span> <span class="n">user_filter_event_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_filter_event_table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dates_users</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">users_app_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">event_filter_event_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">event_filter_event_table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">dates_events</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">events_app_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">count_events</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_last_events</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">random_user_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_duplicates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">return_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_only_query</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">progress_bar_min_interval</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param client: bigquery client</span>
+<span class="sd">    :param job_config: bigquery client job config</span>
+<span class="sd">    :param user_filter_event_names: filter on events for user selection</span>
+<span class="sd">    :param user_filter_event_table: name of the table with users</span>
+<span class="sd">    :param dates_users: first and last dates of first user appearance</span>
+<span class="sd">    :param users_app_version: select only users with this app_version</span>
+<span class="sd">    :param event_filter_event_names: select only users with such events</span>
+<span class="sd">    :param event_filter_event_table: name of the table with events</span>
+<span class="sd">    :param dates_events: first and last date of the event selection period</span>
+<span class="sd">    :param events_app_version: app version filter for event table</span>
+<span class="sd">    :param count_events: number of event which are taking from the event table for every user</span>
+<span class="sd">    :param use_last_events: use last events before target event if true, use first events after otherwise</span>
+<span class="sd">    :param random_user_limit: number of random selected users</span>
+<span class="sd">    :param random_seed: random seed</span>
+<span class="sd">    :param settings: settings dict</span>
+<span class="sd">    :param group_name: add new column &#39;group_name&#39; with value</span>
+<span class="sd">    :param drop_duplicates: list of columns in bigquery table which are used to drop duplicates</span>
+<span class="sd">    :param return_dataframe: if is true then data will be returned as pd.DataFrame, list otherwise</span>
+<span class="sd">    :param return_only_query: return only query string without running</span>
+<span class="sd">    :param hide_progress_bar: hide tqdm progress bar</span>
+<span class="sd">    :param progress_bar_min_interval: min interval of tqdm progress bar in seconds</span>
+
+<span class="sd">    :type client: bigquery.Client()</span>
+<span class="sd">    :type job_config: bigquery.QueryJobConfig()</span>
+<span class="sd">    :type user_filter_event_names: list</span>
+<span class="sd">    :type user_filter_event_table: str</span>
+<span class="sd">    :type dates_users: tuple or list</span>
+<span class="sd">    :type users_app_version: str</span>
+<span class="sd">    :type event_filter_event_names: list</span>
+<span class="sd">    :type event_filter_event_table: str</span>
+<span class="sd">    :type dates_events: tuple or list</span>
+<span class="sd">    :type events_app_version: str</span>
+<span class="sd">    :type count_events: int</span>
+<span class="sd">    :type use_last_events: bool</span>
+<span class="sd">    :type random_user_limit: int</span>
+<span class="sd">    :type random_seed: int</span>
+<span class="sd">    :type settings: dict</span>
+<span class="sd">    :type group_name: str</span>
+<span class="sd">    :type drop_duplicates: list</span>
+<span class="sd">    :type return_dataframe: bool</span>
+<span class="sd">    :type return_only_query: bool</span>
+<span class="sd">    :type hide_progress_bar: bool</span>
+<span class="sd">    :type progress_bar_min_interval: int</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">user_filter_event_names</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;event_names&#39;</span><span class="p">)</span>
+        <span class="n">users_app_version</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;app_version&#39;</span><span class="p">)</span>
+        <span class="n">dates_users</span> <span class="o">=</span> <span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">],</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">][</span><span class="s1">&#39;date_finish&#39;</span><span class="p">])</span>
+        <span class="n">event_filter_event_names</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;event_names&#39;</span><span class="p">)</span>
+        <span class="n">events_app_version</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;app_version&#39;</span><span class="p">)</span>
+        <span class="n">dates_events</span> <span class="o">=</span> <span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">],</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">][</span><span class="s1">&#39;date_finish&#39;</span><span class="p">])</span>
+        <span class="n">count_events</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;count_events&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">use_last_events</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;event_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_last_events&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">random_user_limit</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limit&#39;</span><span class="p">)</span>
+        <span class="n">drop_duplicates</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;drop_duplicates_events&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random_user_limit</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;random_seed&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">]:</span>
+                <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">][</span><span class="s1">&#39;random_seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+            <span class="n">random_seed</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;user_filters&#39;</span><span class="p">][</span><span class="s1">&#39;random_seed&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">dates_events</span><span class="p">,</span> <span class="n">dates_users</span><span class="p">])</span>
+
+    <span class="n">users_event_filter</span> <span class="o">=</span> <span class="n">_prepare_event_filter_query</span><span class="p">(</span><span class="n">user_filter_event_names</span><span class="p">,</span> <span class="n">user_filter_event_table</span><span class="p">)</span>
+    <span class="n">users_app_version_filter</span> <span class="o">=</span> <span class="n">_prepare_app_version_filter_query</span><span class="p">(</span><span class="n">users_app_version</span><span class="p">,</span> <span class="n">users_event_filter</span><span class="p">)</span>
+    <span class="n">events_filter</span> <span class="o">=</span> <span class="n">_prepare_event_filter_query</span><span class="p">(</span><span class="n">event_filter_event_names</span><span class="p">,</span> <span class="n">event_filter_event_table</span><span class="p">)</span>
+    <span class="n">events_app_version_filter</span> <span class="o">=</span> <span class="n">_prepare_app_version_filter_query</span><span class="p">(</span><span class="n">events_app_version</span><span class="p">,</span> <span class="n">events_filter</span><span class="p">)</span>
+    <span class="n">duplicate_event_flag</span> <span class="o">=</span> <span class="n">_prepare_drop_duplicates_flag</span><span class="p">(</span><span class="n">drop_duplicates</span><span class="p">)</span>
+
+    <span class="n">new_users_query</span> <span class="o">=</span> <span class="n">queries</span><span class="o">.</span><span class="n">query_with_params</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">rank_sort_type</span><span class="o">=</span><span class="s1">&#39;DESC&#39;</span> <span class="k">if</span> <span class="n">use_last_events</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">date_events_first</span><span class="o">=</span><span class="n">dates_events</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">date_events_last</span><span class="o">=</span><span class="n">dates_events</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">date_users_events_first</span><span class="o">=</span><span class="n">dates_users</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">date_users_events_last</span><span class="o">=</span><span class="n">dates_users</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">events_filter</span><span class="o">=</span><span class="n">events_filter</span> <span class="k">if</span> <span class="n">events_filter</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">events_app_version_filter</span><span class="o">=</span><span class="n">events_app_version_filter</span><span class="p">,</span>
+        <span class="n">min_event_timestamp</span><span class="o">=</span><span class="s2">&quot;, MIN(event_timestamp) AS min_event_timestamp&quot;</span> <span class="k">if</span> <span class="n">use_last_events</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">users_event_filter</span><span class="o">=</span><span class="n">users_event_filter</span> <span class="k">if</span> <span class="n">users_event_filter</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">users_app_version_filter</span><span class="o">=</span><span class="n">users_app_version_filter</span><span class="p">,</span>
+        <span class="n">delete_events_after_target</span><span class="o">=</span><span class="s2">&quot;WHERE tbl1.event_timestamp &lt;= tbl2.min_event_timestamp&quot;</span> <span class="k">if</span> <span class="n">use_last_events</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">duplicate_event_flag</span><span class="o">=</span><span class="n">duplicate_event_flag</span><span class="p">,</span>
+        <span class="n">duplicate_event_delete</span><span class="o">=</span><span class="s1">&#39;WHERE row_n = 1&#39;</span> <span class="k">if</span> <span class="n">drop_duplicates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">count_events_filter</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> event_rank &lt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s1">&#39;AND&#39;</span> <span class="k">if</span> <span class="n">drop_duplicates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;WHERE&#39;</span><span class="p">,</span>
+            <span class="n">count_events</span><span class="p">)</span> <span class="k">if</span> <span class="n">count_events</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">rand_select_start</span><span class="o">=</span><span class="s1">&#39;SELECT user_pseudo_id, RAND(</span><span class="si">{}</span><span class="s1">) AS random_value FROM (&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">random_seed</span> <span class="k">if</span> <span class="n">random_seed</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">random_user_limit</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">rand_select_end</span><span class="o">=</span><span class="s1">&#39;ORDER BY user_pseudo_id) ORDER BY random_value LIMIT </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">random_user_limit</span><span class="p">)</span> <span class="k">if</span> <span class="n">random_user_limit</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">run_query</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">new_users_query</span><span class="p">,</span> <span class="n">job_config</span><span class="o">=</span><span class="n">job_config</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+                       <span class="n">return_dataframe</span><span class="o">=</span><span class="n">return_dataframe</span><span class="p">,</span> <span class="n">return_only_query</span><span class="o">=</span><span class="n">return_only_query</span><span class="p">,</span>
+                       <span class="n">hide_progress_bar</span><span class="o">=</span><span class="n">hide_progress_bar</span><span class="p">,</span> <span class="n">progress_bar_min_interval</span><span class="o">=</span><span class="n">progress_bar_min_interval</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, App in the Air
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
