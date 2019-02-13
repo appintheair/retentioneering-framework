@@ -113,14 +113,13 @@ def _prepare_drop_duplicates_flag(drop_duplicates=None):
 
 def download_events_multi(client, job_config, settings=None, return_only_query=False, **kwargs):
     """
-    Generate queries from settings, run them in bigquery and download results
+    Generate queries from settings, run them in bigquery and download results.
 
     :param client: bigquery client
     :param job_config: bigquery client job config
     :param settings: settings dict
     :param return_only_query: return only query string for all queries without running
     :param **kwargs: options to pass in download_events function
-
     :type client: bigquery.Client()
     :type job_config: bigquery.QueryJobConfig()
     :type settings: dict

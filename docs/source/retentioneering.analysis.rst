@@ -4,6 +4,22 @@ retentioneering.analysis package
 Submodules
 ----------
 
+retentioneering.analysis.calculate module
+-----------------------------------------
+
+.. automodule:: retentioneering.analysis.calculate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+retentioneering.analysis.cluster module
+---------------------------------------
+
+.. automodule:: retentioneering.analysis.cluster
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 retentioneering.analysis.model module
 -------------------------------------
 
