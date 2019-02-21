@@ -54,7 +54,6 @@ def calc_all_norm_mech(data, mechanics_events, mode='session', duration_thresh=1
     tmp = data.groupby(['user_pseudo_id', 'session']).event_timestamp.min().rename('session_start').reset_index()
     counts = counts.merge(tmp, on=['user_pseudo_id', 'session'])
 
-    
     counts['session_duration'] = (counts.session_end - counts.session_start) / np.timedelta64(1, 's')
     if duration_thresh is not None:
         counts = counts.loc[counts.session_duration >= duration_thresh].copy()
@@ -131,24 +130,27 @@ def _build_df(data, target, mex, q=.99, q2=.99):
     return res.reset_index(drop=True)
 
 
-def mechanics_enrichment(data, mechanics, q=.99, q2=.99):
+def mechanics_enrichment(data, mechanics, id_col, event_col, q=.99, q2=.99):
     """
     Enrich list of events specific for mechanic
 
     :param data: clickstream data with columns `session` (rank of user`s session)
-    :param mechanics: table with description in form `['id', 'Events']`,
-        where `id` is mechanic name and `Events` contains target events specific for that `mechanics`
+    :param mechanics: table with description in form `[id_col, event_col]`,
+        where id_col is a column with mechanic name and event_col is a column
+        which contains target events specific for that mechanic
+    :param id_col: name of the column with mechanic name
+    :param event_col: name of the column with target events specific for that mechanic
     :param q: quantile for frequency of target events
     :param q2: quantile for frequency of target events of other mechanic
+    :type data: pd.DataFrame
+    :type mechanics: pd.DataFrame
+    :type q: float in interval (0, 1)
+    :type q2: float in interval (0, 1)
     :return: mapping of mechanic and its target events
-
-    :param data: pd.DataFrame
-    :param mechanics: pd.DataFrame
-    :param q: float in interval (0, 1)
-    :param q2: float in interval (0, 1)
     :rtype: Dict[str, List[str]]
     """
-    mechanics_map = mechanics.groupby('id').Events.agg(list).to_dict()
+
+    mechanics_map = mechanics.groupby(id_col)[event_col].agg(list).to_dict()
     mechanics_events = []
     for key, val in tqdm(mechanics_map.items(), total=len(mechanics_map)):
         mechanics_events.append(_build_df(data, val, key, q=q, q2=q2))
