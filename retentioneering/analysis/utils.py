@@ -48,14 +48,16 @@ def prepare_dataset(df, target_event, event_filter=None, n_start_events=None):
         df = df[~df.event_name.isin(event_filter)]
     df = df.sort_values('event_timestamp')
     train = df.groupby('user_pseudo_id').event_name.agg(_str_agg)
-    train = train.reset_index(None)
-    train.event_name = train.event_name.apply(lambda x: x.split())
-    train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
-    train.event_name = train.event_name.apply(lambda x: x[:-1])
-    if n_start_events:
-        train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
-    else:
-        train.event_name = train.event_name.apply(lambda x: ' '.join(x))
+    train = train.reset_index()
+    if target_event or n_start_events:
+        train.event_name = train.event_name.apply(lambda x: x.split())
+        if target_event:
+            train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
+            train.event_name = train.event_name.apply(lambda x: x[:-1])
+        if n_start_events:
+            train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
+        else:
+            train.event_name = train.event_name.apply(lambda x: ' '.join(x))
     return train
 
 

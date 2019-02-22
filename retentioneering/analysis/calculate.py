@@ -5,7 +5,7 @@ from retentioneering.analysis.utils import prepare_dataset
 from retentioneering.visualization import plot
 
 
-def calculate_frequency_hist(df, settings, target_events=('lost', 'passed'),
+def calculate_frequency_hist(df, settings, target_events=None,
                              make_plot=True, save=True, plot_name=None, figsize=(8, 5)):
     """
     Calculate frequency of each event from input clickstream and plot a barplot
@@ -22,15 +22,20 @@ def calculate_frequency_hist(df, settings, target_events=('lost', 'passed'),
 
     :type df: pd.DataFrame
     :type settings: dict
-    :type target_events: tuple or list
+    :type target_events: Union[tuple, list, str, None]
     :type make_plot: bool
     :type save: bool
     :type plot_name: str
     :type figsize: tuple
     :return: pd.DataFrame
     """
-    users = df.user_pseudo_id[df.event_name.isin(target_events)].unique()
-    df = df[df.user_pseudo_id.isin(users)]
+    if isinstance(target_events, str):
+        target_events = [target_events]
+
+    if target_events is not None:
+        users = df.user_pseudo_id[df.event_name.isin(target_events)].unique()
+        df = df[df.user_pseudo_id.isin(users)]
+
     nodes_hist = (df.groupby('event_name', as_index=False)
                   .event_timestamp.count()
                   .sort_values('event_timestamp', ascending=False))
@@ -41,7 +46,7 @@ def calculate_frequency_hist(df, settings, target_events=('lost', 'passed'),
     return nodes_hist
 
 
-def calculate_frequency_map(df, settings, target_events=('lost', 'passed'), plot_name=None,
+def calculate_frequency_map(df, settings, target_events=None, plot_name=None,
                             make_plot=True, save=True, figsize_hist=(8, 5), figsize_heatmap=(10, 15)):
     """
     Calculate frequency of each event for each user from input clickstream and plot a heatmap
@@ -59,7 +64,7 @@ def calculate_frequency_map(df, settings, target_events=('lost', 'passed'), plot
 
     :type df: pd.DataFrame
     :type settings: dict
-    :type target_events: tuple or list
+    :type target_events: Union[tuple, list, str, None]
     :type plot_name: str
     :type make_plot: bool
     :type save: bool
@@ -67,13 +72,17 @@ def calculate_frequency_map(df, settings, target_events=('lost', 'passed'), plot
     :type figsize_heatmap: tuple
     :return: pd.DataFrame
     """
-    users = df.user_pseudo_id[df.event_name.isin(target_events)].unique()
-    df = df[df.user_pseudo_id.isin(users)]
+    if isinstance(target_events, str):
+        target_events = [target_events]
+
+    if target_events is not None:
+        users = df.user_pseudo_id[df.event_name.isin(target_events)].unique()
+        df = df[df.user_pseudo_id.isin(users)]
     data = prepare_dataset(df, '')
 
     cv = CountVectorizer()
     x = cv.fit_transform(data.event_name.values).todense()
-    cols = cv.inverse_transform(np.ones(df.event_name.nunique() - len(target_events)))[0]
+    cols = cv.inverse_transform(np.ones(data.event_name.nunique() - len(target_events)))[0]
     x = pd.DataFrame(x, columns=cols, index=data.user_pseudo_id)
     nodes_hist = calculate_frequency_hist(df=df, settings=settings, target_events=target_events,
                                           make_plot=make_plot, save=save, plot_name=plot_name, figsize=figsize_hist)
