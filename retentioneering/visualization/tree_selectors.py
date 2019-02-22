@@ -3,12 +3,12 @@ from IPython.display import HTML, display
 _end = '_end_'
 
 
-def _make_trie_of_events(data):
+def _make_trie_of_events(data, sep):
     events = data.event_name.unique()
     root = dict()
     for event in events:
         current_dict = root
-        for e in event.split('_'):
+        for e in event.split(sep):
             current_dict = current_dict.setdefault(e, {})
         current_dict[_end] = event
     return root
@@ -44,7 +44,7 @@ def _add_checkbox(cur_dict, cur_prefix='', text='', is_checked=True):
     return text
 
 
-def print_checkboxes(data, checkbox_id='1', is_checked=True):
+def print_checkboxes(data, checkbox_id='1', is_checked=True, sep='_'):
     display(HTML('''
     <!DOCTYPE html>
     <html>
@@ -139,7 +139,7 @@ def print_checkboxes(data, checkbox_id='1', is_checked=True):
          <h2>Graph event filter</h2>
 
          <ul class="treeview''' + checkbox_id + '''">
-    ''' + _add_checkbox(_make_trie_of_events(data), text='', is_checked=is_checked) + '''        
+    ''' + _add_checkbox(_make_trie_of_events(data, sep=sep), text='', is_checked=is_checked) + '''        
         </ul>
 
       </div>
