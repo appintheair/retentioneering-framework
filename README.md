@@ -42,12 +42,9 @@ And git from [here](https://git-scm.com/downloads).
 ### Python package
 
 - To install Python package from github, you need to clone that repository.
+
 ```bash
-git clone git@github.com:appintheair/aita-ml-retentioneering-python.git
-```
-or
-```bash
-git clone https://github.com/appintheair/aita-ml-retentioneering-python.git
+git clone https://github.com/appintheair/retentioneering-framework.git
 ```
 - Install dependencies from requirements.txt file from that directory
 ```bash 
