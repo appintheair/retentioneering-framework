@@ -54,7 +54,7 @@ Python package
 
    .. code:: bash
 
-       git clone https://github.com/appintheair/aita-ml-retentioneering-python.git
+       git clone https://github.com/appintheair/retentioneering-framework.git
 
 -  Then, install dependencies from the requirements.txt file from that directory:
 

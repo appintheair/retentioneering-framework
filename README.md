@@ -41,29 +41,25 @@ And git from [here](https://git-scm.com/downloads).
 
 ### Python package
 
-- To install Python package from github, you need to clone that repository.
+- To install Python package from github, you need to clone our repository:
 ```bash
-git clone git@github.com:appintheair/aita-ml-retentioneering-python.git
+git clone https://github.com/appintheair/retentioneering-framework.git
 ```
-or
-```bash
-git clone https://github.com/appintheair/aita-ml-retentioneering-python.git
-```
-- Install dependencies from requirements.txt file from that directory
+- Then, install dependencies from the requirements.txt file from that directory:
 ```bash 
-sudo pip install -r requirements.txt
+pip install -r requirements.txt --user
 ```
 or if previous command don't work
 ```bash 
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt --user
 ```
 - Then just run the setup.py file from that directory
 ```bash
-sudo python setup.py install
+python setup.py install --user
 ```
 or if previous command don't work
 ```bash
-sudo python3 setup.py install
+python3 setup.py install --user
 ```
 ## First steps
 - Put path to your google cloud credentials and your project name in settings yaml ([example](examples/new_users_lost_prediction/settings_yaml.yaml)).
