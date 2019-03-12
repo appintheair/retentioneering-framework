@@ -28,18 +28,18 @@ def _str_agg(x):
     return ' '.join(x)
 
 
-def prepare_dataset(df, target_event, event_filter=None, n_start_events=None):
+def prepare_dataset(df, target_events, event_filter=None, n_start_events=None):
     """
     Prepares data for classifier inference
 
     :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
             `event_timestamp` and `user_pseudo_id`
-    :param target_event: name of event which signalize target function
+    :param target_events: name of event which signalize target function
             (e.g. for prediction of lost users it'll be `lost`)
     :param event_filter: list of events that is wanted to use in analysis
     :param n_start_events: length of users trajectory from start
     :type df: pd.DataFrame
-    :type target_event: str
+    :type target_events: Union[list, None]
     :type event_filter: list or other iterable
     :return: prepared data for inference (glued user events in one trajectory)
     :rtype: pd.DataFrame
@@ -49,10 +49,10 @@ def prepare_dataset(df, target_event, event_filter=None, n_start_events=None):
     df = df.sort_values('event_timestamp')
     train = df.groupby('user_pseudo_id').event_name.agg(_str_agg)
     train = train.reset_index()
-    if target_event or n_start_events:
+    if target_events or n_start_events:
         train.event_name = train.event_name.apply(lambda x: x.split())
-        if target_event:
-            train['target'] = train.event_name.apply(lambda x: x[-1] == target_event)
+        if target_events:
+            train['target'] = train.event_name.apply(lambda x: x[-1] in target_events)
             train.event_name = train.event_name.apply(lambda x: x[:-1])
         if n_start_events:
             train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
