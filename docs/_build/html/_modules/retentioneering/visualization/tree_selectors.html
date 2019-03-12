@@ -159,12 +159,12 @@
 <span class="n">_end</span> <span class="o">=</span> <span class="s1">&#39;_end_&#39;</span>
 
 
-<span class="k">def</span> <span class="nf">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
     <span class="n">events</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
     <span class="n">root</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
         <span class="n">current_dict</span> <span class="o">=</span> <span class="n">root</span>
-        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">):</span>
             <span class="n">current_dict</span> <span class="o">=</span> <span class="n">current_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">current_dict</span><span class="p">[</span><span class="n">_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span>
     <span class="k">return</span> <span class="n">root</span>
@@ -200,7 +200,7 @@
     <span class="k">return</span> <span class="n">text</span>
 
 
-<div class="viewcode-block" id="print_checkboxes"><a class="viewcode-back" href="../../../retentioneering.visualization.html#retentioneering.visualization.tree_selectors.print_checkboxes">[docs]</a><span class="k">def</span> <span class="nf">print_checkboxes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">checkbox_id</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="print_checkboxes"><a class="viewcode-back" href="../../../retentioneering.visualization.html#retentioneering.visualization.tree_selectors.print_checkboxes">[docs]</a><span class="k">def</span> <span class="nf">print_checkboxes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">checkbox_id</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
     <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">    &lt;!DOCTYPE html&gt;</span>
 <span class="s1">    &lt;html&gt;</span>
@@ -295,7 +295,7 @@
 <span class="s1">         &lt;h2&gt;Graph event filter&lt;/h2&gt;</span>
 
 <span class="s1">         &lt;ul class=&quot;treeview&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">checkbox_id</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&quot;&gt;</span>
-<span class="s1">    &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">_add_checkbox</span><span class="p">(</span><span class="n">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="n">is_checked</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;        </span>
+<span class="s1">    &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">_add_checkbox</span><span class="p">(</span><span class="n">_make_trie_of_events</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">),</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_checked</span><span class="o">=</span><span class="n">is_checked</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;        </span>
 <span class="s1">        &lt;/ul&gt;</span>
 
 <span class="s1">      &lt;/div&gt;</span>

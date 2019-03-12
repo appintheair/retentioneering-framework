@@ -210,7 +210,6 @@
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;session_start&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;user_pseudo_id&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span>
 
-    
     <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;session_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">session_end</span> <span class="o">-</span> <span class="n">counts</span><span class="o">.</span><span class="n">session_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">duration_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">counts</span><span class="o">.</span><span class="n">session_duration</span> <span class="o">&gt;=</span> <span class="n">duration_thresh</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -287,24 +286,27 @@
     <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="mechanics_enrichment"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.weighter.mechanics_enrichment">[docs]</a><span class="k">def</span> <span class="nf">mechanics_enrichment</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mechanics</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
+<div class="viewcode-block" id="mechanics_enrichment"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.weighter.mechanics_enrichment">[docs]</a><span class="k">def</span> <span class="nf">mechanics_enrichment</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mechanics</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">q</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="n">q2</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Enrich list of events specific for mechanic</span>
 
 <span class="sd">    :param data: clickstream data with columns `session` (rank of user`s session)</span>
-<span class="sd">    :param mechanics: table with description in form `[&#39;id&#39;, &#39;Events&#39;]`,</span>
-<span class="sd">        where `id` is mechanic name and `Events` contains target events specific for that `mechanics`</span>
+<span class="sd">    :param mechanics: table with description in form `[id_col, event_col]`,</span>
+<span class="sd">        where id_col is a column with mechanic name and event_col is a column</span>
+<span class="sd">        which contains target events specific for that mechanic</span>
+<span class="sd">    :param id_col: name of the column with mechanic name</span>
+<span class="sd">    :param event_col: name of the column with target events specific for that mechanic</span>
 <span class="sd">    :param q: quantile for frequency of target events</span>
 <span class="sd">    :param q2: quantile for frequency of target events of other mechanic</span>
+<span class="sd">    :type data: pd.DataFrame</span>
+<span class="sd">    :type mechanics: pd.DataFrame</span>
+<span class="sd">    :type q: float in interval (0, 1)</span>
+<span class="sd">    :type q2: float in interval (0, 1)</span>
 <span class="sd">    :return: mapping of mechanic and its target events</span>
-
-<span class="sd">    :param data: pd.DataFrame</span>
-<span class="sd">    :param mechanics: pd.DataFrame</span>
-<span class="sd">    :param q: float in interval (0, 1)</span>
-<span class="sd">    :param q2: float in interval (0, 1)</span>
 <span class="sd">    :rtype: Dict[str, List[str]]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mechanics_map</span> <span class="o">=</span> <span class="n">mechanics</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Events</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="n">mechanics_map</span> <span class="o">=</span> <span class="n">mechanics</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">id_col</span><span class="p">)[</span><span class="n">event_col</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="n">mechanics_events</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">mechanics_map</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">mechanics_map</span><span class="p">)):</span>
         <span class="n">mechanics_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_df</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">))</span>
