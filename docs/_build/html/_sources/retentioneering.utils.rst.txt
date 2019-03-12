@@ -20,6 +20,14 @@ retentioneering.utils.export module
     :undoc-members:
     :show-inheritance:
 
+retentioneering.utils.preparing module
+--------------------------------------
+
+.. automodule:: retentioneering.utils.preparing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 retentioneering.utils.queries module
 ------------------------------------
 

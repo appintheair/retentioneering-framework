@@ -161,7 +161,7 @@
 <span class="kn">from</span> <span class="nn">retentioneering.visualization</span> <span class="k">import</span> <span class="n">plot</span>
 
 
-<div class="viewcode-block" id="calculate_frequency_hist"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_hist">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_hist</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">),</span>
+<div class="viewcode-block" id="calculate_frequency_hist"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_hist">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_hist</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">make_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate frequency of each event from input clickstream and plot a barplot</span>
@@ -178,15 +178,20 @@
 
 <span class="sd">    :type df: pd.DataFrame</span>
 <span class="sd">    :type settings: dict</span>
-<span class="sd">    :type target_events: tuple or list</span>
+<span class="sd">    :type target_events: Union[tuple, list, str, None]</span>
 <span class="sd">    :type make_plot: bool</span>
 <span class="sd">    :type save: bool</span>
 <span class="sd">    :type plot_name: str</span>
 <span class="sd">    :type figsize: tuple</span>
 <span class="sd">    :return: pd.DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_events</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">target_events</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_events</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">target_events</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+
     <span class="n">nodes_hist</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                   <span class="o">.</span><span class="n">event_timestamp</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
                   <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_timestamp&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
@@ -197,7 +202,7 @@
     <span class="k">return</span> <span class="n">nodes_hist</span></div>
 
 
-<div class="viewcode-block" id="calculate_frequency_map"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_map">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">),</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="calculate_frequency_map"><a class="viewcode-back" href="../../../retentioneering.analysis.html#retentioneering.analysis.calculate.calculate_frequency_map">[docs]</a><span class="k">def</span> <span class="nf">calculate_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">make_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize_hist</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">figsize_heatmap</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate frequency of each event for each user from input clickstream and plot a heatmap</span>
@@ -215,7 +220,7 @@
 
 <span class="sd">    :type df: pd.DataFrame</span>
 <span class="sd">    :type settings: dict</span>
-<span class="sd">    :type target_events: tuple or list</span>
+<span class="sd">    :type target_events: Union[tuple, list, str, None]</span>
 <span class="sd">    :type plot_name: str</span>
 <span class="sd">    :type make_plot: bool</span>
 <span class="sd">    :type save: bool</span>
@@ -223,13 +228,17 @@
 <span class="sd">    :type figsize_heatmap: tuple</span>
 <span class="sd">    :return: pd.DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_events</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">target_events</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_events</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">target_events</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_events</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">users</span><span class="p">)]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target_events</span><span class="p">)</span>
 
     <span class="n">cv</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
-    <span class="n">cols</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_events</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">event_name</span><span class="o">.</span><span class="n">nunique</span><span class="p">()))[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">user_pseudo_id</span><span class="p">)</span>
     <span class="n">nodes_hist</span> <span class="o">=</span> <span class="n">calculate_frequency_hist</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">target_events</span><span class="o">=</span><span class="n">target_events</span><span class="p">,</span>
                                           <span class="n">make_plot</span><span class="o">=</span><span class="n">make_plot</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize_hist</span><span class="p">)</span>

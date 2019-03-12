@@ -175,7 +175,7 @@
 <span id="retentioneering-analysis-calculate-module"></span><h2>retentioneering.analysis.calculate module<a class="headerlink" href="#module-retentioneering.analysis.calculate" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="retentioneering.analysis.calculate.calculate_frequency_hist">
-<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_hist</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=('lost'</em>, <em>'passed')</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>plot_name=None</em>, <em>figsize=(8</em>, <em>5)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_hist" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_hist</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=None</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>plot_name=None</em>, <em>figsize=(8</em>, <em>5)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_hist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate frequency of each event from input clickstream and plot a barplot</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -185,7 +185,7 @@
 <li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
 <cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
 <li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
-<li><strong>target_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – name of event which signalize target function
+<li><strong>target_events</strong> (<em>Union</em><em>[</em><em>tuple</em><em>, </em><em>list</em><em>, </em><em>str</em><em>, </em><em>None</em><em>]</em>) – name of event which signalize target function
 (e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
 <li><strong>make_plot</strong> (<em>bool</em>) – plot stats or not</li>
 <li><strong>save</strong> (<em>bool</em>) – True if the graph should be saved</li>
@@ -203,7 +203,7 @@
 
 <dl class="function">
 <dt id="retentioneering.analysis.calculate.calculate_frequency_map">
-<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_map</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=('lost'</em>, <em>'passed')</em>, <em>plot_name=None</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>figsize_hist=(8</em>, <em>5)</em>, <em>figsize_heatmap=(10</em>, <em>15)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_map" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">retentioneering.analysis.calculate.</code><code class="descname">calculate_frequency_map</code><span class="sig-paren">(</span><em>df</em>, <em>settings</em>, <em>target_events=None</em>, <em>plot_name=None</em>, <em>make_plot=True</em>, <em>save=True</em>, <em>figsize_hist=(8</em>, <em>5)</em>, <em>figsize_heatmap=(10</em>, <em>15)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/calculate.html#calculate_frequency_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.calculate.calculate_frequency_map" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate frequency of each event for each user from input clickstream and plot a heatmap</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -213,7 +213,7 @@
 <li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
 <cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
 <li><strong>settings</strong> (<em>dict</em>) – experiment config (can be empty dict here)</li>
-<li><strong>target_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – name of event which signalize target function
+<li><strong>target_events</strong> (<em>Union</em><em>[</em><em>tuple</em><em>, </em><em>list</em><em>, </em><em>str</em><em>, </em><em>None</em><em>]</em>) – name of event which signalize target function
 (e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
 <li><strong>plot_name</strong> (<em>str</em>) – name of file with graph plot</li>
 <li><strong>make_plot</strong> (<em>bool</em>) – plot stats or not</li>
@@ -726,7 +726,7 @@ check the pd.DataFrame.groupby().agg() documentation</li>
 
 <dl class="function">
 <dt id="retentioneering.analysis.utils.prepare_dataset">
-<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">prepare_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>target_event</em>, <em>event_filter=None</em>, <em>n_start_events=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#prepare_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.prepare_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">retentioneering.analysis.utils.</code><code class="descname">prepare_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>target_events</em>, <em>event_filter=None</em>, <em>n_start_events=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/utils.html#prepare_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.utils.prepare_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepares data for classifier inference</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -735,7 +735,7 @@ check the pd.DataFrame.groupby().agg() documentation</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>pd.DataFrame</em>) – data from BQ or your own (clickstream). Should have at least three columns: <cite>event_name</cite>,
 <cite>event_timestamp</cite> and <cite>user_pseudo_id</cite></li>
-<li><strong>target_event</strong> (<em>str</em>) – name of event which signalize target function
+<li><strong>target_events</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>None</em><em>]</em>) – name of event which signalize target function
 (e.g. for prediction of lost users it’ll be <cite>lost</cite>)</li>
 <li><strong>event_filter</strong> (<em>list</em><em> or </em><em>other iterable</em>) – list of events that is wanted to use in analysis</li>
 <li><strong>n_start_events</strong> – length of users trajectory from start</li>
@@ -797,22 +797,21 @@ check the pd.DataFrame.groupby().agg() documentation</li>
 
 <dl class="function">
 <dt id="retentioneering.analysis.weighter.mechanics_enrichment">
-<code class="descclassname">retentioneering.analysis.weighter.</code><code class="descname">mechanics_enrichment</code><span class="sig-paren">(</span><em>data</em>, <em>mechanics</em>, <em>q=0.99</em>, <em>q2=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/weighter.html#mechanics_enrichment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.weighter.mechanics_enrichment" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">retentioneering.analysis.weighter.</code><code class="descname">mechanics_enrichment</code><span class="sig-paren">(</span><em>data</em>, <em>mechanics</em>, <em>id_col</em>, <em>event_col</em>, <em>q=0.99</em>, <em>q2=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retentioneering/analysis/weighter.html#mechanics_enrichment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retentioneering.analysis.weighter.mechanics_enrichment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enrich list of events specific for mechanic</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – clickstream data with columns <cite>session</cite> (rank of user`s session)</li>
-<li><strong>mechanics</strong> – table with description in form <cite>[‘id’, ‘Events’]</cite>,
-where <cite>id</cite> is mechanic name and <cite>Events</cite> contains target events specific for that <cite>mechanics</cite></li>
-<li><strong>q</strong> – quantile for frequency of target events</li>
-<li><strong>q2</strong> – quantile for frequency of target events of other mechanic</li>
-<li><strong>data</strong> – pd.DataFrame</li>
-<li><strong>mechanics</strong> – pd.DataFrame</li>
-<li><strong>q</strong> – float in interval (0, 1)</li>
-<li><strong>q2</strong> – float in interval (0, 1)</li>
+<li><strong>data</strong> (<em>pd.DataFrame</em>) – clickstream data with columns <cite>session</cite> (rank of user`s session)</li>
+<li><strong>mechanics</strong> (<em>pd.DataFrame</em>) – table with description in form <cite>[id_col, event_col]</cite>,
+where id_col is a column with mechanic name and event_col is a column
+which contains target events specific for that mechanic</li>
+<li><strong>id_col</strong> – name of the column with mechanic name</li>
+<li><strong>event_col</strong> – name of the column with target events specific for that mechanic</li>
+<li><strong>q</strong> (<em>float in interval</em><em> (</em><em>0</em><em>, </em><em>1</em><em>)</em>) – quantile for frequency of target events</li>
+<li><strong>q2</strong> (<em>float in interval</em><em> (</em><em>0</em><em>, </em><em>1</em><em>)</em>) – quantile for frequency of target events of other mechanic</li>
 </ul>
 </td>
 </tr>
