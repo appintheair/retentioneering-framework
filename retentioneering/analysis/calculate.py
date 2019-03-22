@@ -82,12 +82,12 @@ def calculate_frequency_map(df, settings, target_events=None, plot_name=None,
 
     cv = CountVectorizer()
     x = cv.fit_transform(data.event_name.values).todense()
-    cols = cv.inverse_transform(np.ones(data.event_name.nunique()))[0]
+    cols = cv.inverse_transform(x[0] + 1)[0]
     x = pd.DataFrame(x, columns=cols, index=data.user_pseudo_id)
     nodes_hist = calculate_frequency_hist(df=df, settings=settings, target_events=target_events,
                                           make_plot=make_plot, save=save, plot_name=plot_name, figsize=figsize_hist)
 
-    sorted_cols = nodes_hist.event_name[~nodes_hist.event_name.isin(target_events)].values
+    sorted_cols = nodes_hist.event_name[~nodes_hist.event_name.isin(target_events or [])].values
     x = x.loc[:, sorted_cols]
     x = x.sort_values(list(sorted_cols), ascending=False)
     if make_plot:
