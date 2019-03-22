@@ -22,7 +22,7 @@ def _get_session(df, order='all', treshold=0.5):
 
 def plot_graph_api(df, settings, users='all', task='lost', order='all', treshold=0.5,
                    start_event=None, end_event=None):
-    warnings.warn('Please use retentioneering.visualization.plot_graph_api instead')
+    warnings.warn('Please use retentioneering.visualization.plot.plot_graph_api instead')
     export_folder, graph_name, set_name = export_tracks(df, settings, users, task, order, treshold,
                                                         start_event, end_event)
     _api_plot(export_folder, graph_name, set_name, plot_type=task)
@@ -108,9 +108,10 @@ def export_tracks(df, settings, users='all', task='lost', order='all', treshold=
 
     settings['events']['session_thr_time'] = treshold * 1e8 * 36
 
-    for i in os.listdir(settings['export_folder']):
-        if 'settings' in i:
-            set_name = i
+    set_name = 'settings.json'
+    for file_name in os.listdir(settings['export_folder']):
+        if 'settings' in file_name:
+            set_name = file_name
 
     with open(os.path.join(settings['export_folder'], set_name), 'w') as f:
         json.dump(settings, f)

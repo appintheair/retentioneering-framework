@@ -12,7 +12,11 @@ import warnings
 
 
 def _check_folder(settings):
-    if settings.get('export_folder'):
+    selected_dir = settings.get('export_folder')
+    if selected_dir:
+        if not os.path.isdir(selected_dir):
+            raise ValueError("You have selected export directory that doesn't exist ({}). "
+                             "Please select another or create this one".format(selected_dir))
         return settings
     else:
         if not os.path.isdir('./experiments/'):

@@ -33,29 +33,41 @@ without account registration.
    2. Visualize users path in the app
    3. Build the classifier
 
-      1. Classifier helps you to pick out specific users paths
-      2. Classifier allows estimating the probability of the user's
-      leaving from the app based on his current path. One can use this
-      information to dynamically change the content of the app to prevent that.
+        1. Classifier helps you to pick out specific users paths
+        2. Classifier allows estimating the probability of the user's leaving from the app based on his current path. One can use this information to dynamically change the content of the app to prevent that.
+
 
 **Expected results**
 
 1. You will identify the most "problematic" elements of the app
-2. You will get the classifier which will allow you to predict the user's
-leaving from the app based on the current user's behavior
+2. You will get the classifier which will allow you to predict the user's leaving from the app based on the current user's behavior
 
 Import retentioneering framework
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First of all, we need to import data and set documents config with the export folder
-(you can leave it empty and the script will create a folder with current timestamp).
+First of all, we need to import package module
 
 .. code:: python
 
     from retentioneering import analysis
+
+
+After that we shoud select the export folder in config
+(you can leave it empty and the script will create a folder with current timestamp).
+Note: if you don't want to leave this field empty, you have to specify an existing directory,
+because the script will not create it.
+
+.. code:: python
+
     settings = {
         'export_folder': './experiments/new_experiment'
     }
+
+or
+
+.. code:: python
+
+    settings = {}
 
 Events\` probability dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,7 +129,7 @@ Plot for group of users who have **passed** event:
 
 .. code:: python
 
-    desc_loss = analysis.get_desc_table(df_passed,
+    desc_passed = analysis.get_desc_table(df_passed,
                                         settings=settings,
                                         plot=True,
                                         target_event_list=['lost',
@@ -153,12 +165,12 @@ Out:
 
 .. code-block:: none
 
-                        event_name                      next_event  trans_count
-    0  onboarding__chooseLoginType                            lost            1
-    1  onboarding__chooseLoginType          onboarding_login_Type1          414
-    2  onboarding__chooseLoginType          onboarding_login_Type2          159
-    3  onboarding__chooseLoginType  onboarding_privacy_policyShown         2133
-    4     onboarding__loginFailure                            lost            1
+                        event_name                      next_event  trans_count    ...
+    0  onboarding__chooseLoginType                            lost            1    ...
+    1  onboarding__chooseLoginType          onboarding_login_Type1          414    ...
+    2  onboarding__chooseLoginType          onboarding_login_Type2          159    ...
+    3  onboarding__chooseLoginType  onboarding_privacy_policyShown         2133    ...
+    4     onboarding__loginFailure                            lost            1    ...
 
 
 Now we can see which transitions take the most time and how often people have used different transitions.
@@ -173,17 +185,17 @@ Out:
 
 .. code-block:: none
 
-                               event_name                         next_event  trans_count
-    84          onboarding_welcome_screen          onboarding_welcome_screen         5021
-    85          onboarding_welcome_screen                             passed         2330
-    3         onboarding__chooseLoginType     onboarding_privacy_policyShown         2133
-    79          onboarding_welcome_screen        onboarding__chooseLoginType         1938
-    67     onboarding_privacy_policyShown             onboarding_login_Type1         1675
-    11             onboarding_login_Type1  onboarding_privacy_policyAccepted         1666
-    82          onboarding_welcome_screen        onboarding_otherLogin__show         1601
-    62  onboarding_privacy_policyAccepted          onboarding_welcome_screen         1189
-    78          onboarding_welcome_screen                               lost         1043
-    47        onboarding_otherLogin__show          onboarding_welcome_screen          876
+                               event_name                         next_event  trans_count    ...
+    84          onboarding_welcome_screen          onboarding_welcome_screen         5021    ...
+    85          onboarding_welcome_screen                             passed         2330    ...
+    3         onboarding__chooseLoginType     onboarding_privacy_policyShown         2133    ...
+    79          onboarding_welcome_screen        onboarding__chooseLoginType         1938    ...
+    67     onboarding_privacy_policyShown             onboarding_login_Type1         1675    ...
+    11             onboarding_login_Type1  onboarding_privacy_policyAccepted         1666    ...
+    82          onboarding_welcome_screen        onboarding_otherLogin__show         1601    ...
+    62  onboarding_privacy_policyAccepted          onboarding_welcome_screen         1189    ...
+    78          onboarding_welcome_screen                               lost         1043    ...
+    47        onboarding_otherLogin__show          onboarding_welcome_screen          876    ...
 
 
 You can see the events where users spend most of their time. It seems
@@ -204,12 +216,12 @@ Out:
 
 .. code-block:: none
 
-                                          onboarding_login_Type1   onboarding_privacy_policyShown
-    onboarding_login_Type1                                   0.0                              0.0
-    onboarding_privacy_policyShown                        1675.0                              0.0
-    onboarding__loginFailure                                 0.0                              0.0
-    onboarding_privacy_policyTapToPolicy                     0.0                              0.0
-    onboarding_welcome_screen                                0.0                              0.0
+                                            ...   onboarding_login_Type1   onboarding_privacy_policyShown    ...
+    onboarding_login_Type1                  ...                      0.0                              0.0    ...
+    onboarding_privacy_policyShown          ...                   1675.0                              0.0    ...
+    onboarding__loginFailure                ...                      0.0                              0.0    ...
+    onboarding_privacy_policyTapToPolicy    ...                      0.0                              0.0    ...
+    onboarding_welcome_screen               ...                      0.0                              0.0    ...
 
 Users clustering
 ~~~~~~~~~~~~~~~~
@@ -218,7 +230,7 @@ Also, we could clusterize users by the frequency of events in their path:
 
 .. code:: python
 
-    countmap = analysis.utils.plot_frequency_map(df, settings, )
+    countmap = analysis.calculate.calculate_frequency_map(df, settings)
 
 .. image:: ../_static/plots/bar.png
    :width: 1200
