@@ -301,7 +301,7 @@ Lets load it into pandas DataFrame:
 
 .. code:: python
 
-    test_data = pd.read_csv('example_datasets/test.cdv')
+    test_data = pd.read_csv('example_datasets/test.csv')
 
 Now we can predict probabilities for new users:
 

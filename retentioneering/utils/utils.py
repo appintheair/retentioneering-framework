@@ -76,7 +76,7 @@ def init_from_file(filename, is_json=False):
     :param filename: path to file with config
     :param is_json: read file as json if true (read as yaml otherwise)
 
-    :type filename: path
+    :type filename: str
     :type is_json: bool
     :return:
     """
