@@ -119,12 +119,12 @@ def download_events_multi(client, job_config, settings=None, return_only_query=F
     :param job_config: bigquery client job config
     :param settings: settings dict
     :param return_only_query: return only query string for all queries without running
-    :param **kwargs: options to pass in download_events function
+    :param kwargs: options to pass in download_events function
     :type client: bigquery.Client()
     :type job_config: bigquery.QueryJobConfig()
     :type settings: dict
     :type return_only_query: bool
-    :type **kwargs: keywords
+    :type kwargs: keywords
     :return: pd.DataFrame or list
     """
     df = pd.DataFrame()

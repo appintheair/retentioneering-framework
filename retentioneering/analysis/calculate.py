@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from retentioneering.analysis.utils import prepare_dataset
@@ -39,7 +38,6 @@ def calculate_frequency_hist(df, settings, target_events=None,
     nodes_hist = (df.groupby('event_name', as_index=False)
                   .event_timestamp.count()
                   .sort_values('event_timestamp', ascending=False))
-    nodes_hist.event_name = nodes_hist.event_name.apply(lambda x: x.lower())
     if make_plot:
         plot.bars(nodes_hist.event_name.values, nodes_hist.event_timestamp.values, settings,
                   save=save, plot_name=plot_name, figsize=figsize)
@@ -75,16 +73,21 @@ def calculate_frequency_map(df, settings, target_events=None, plot_name=None,
     if isinstance(target_events, str):
         target_events = [target_events]
 
+    df = df.copy()
     if target_events is not None:
         users = df.user_pseudo_id[df.event_name.isin(target_events)].unique()
         df = df[df.user_pseudo_id.isin(users)]
-    data = prepare_dataset(df, target_events)
+    event_to_idx = {event_name: str(i).zfill(3) for i, event_name in enumerate(df.event_name.unique())}
+    idx_to_event = {i: event_name for event_name, i in event_to_idx.items()}
+    df.event_name = df.event_name.map(event_to_idx)
+    data = prepare_dataset(df, [event_to_idx[t] for t in target_events or []])
 
     cv = CountVectorizer()
     x = cv.fit_transform(data.event_name.values).todense()
-    cols = cv.inverse_transform(x[0] + 1)[0]
+    cols = [idx_to_event[c] for c in cv.get_feature_names()]
     x = pd.DataFrame(x, columns=cols, index=data.user_pseudo_id)
-    nodes_hist = calculate_frequency_hist(df=df, settings=settings, target_events=target_events,
+    df.event_name = df.event_name.map(idx_to_event)
+    nodes_hist = calculate_frequency_hist(df=df, settings=settings, target_events=None,
                                           make_plot=make_plot, save=save, plot_name=plot_name, figsize=figsize_hist)
 
     sorted_cols = nodes_hist.event_name[~nodes_hist.event_name.isin(target_events or [])].values
