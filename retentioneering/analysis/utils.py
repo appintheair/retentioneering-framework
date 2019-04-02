@@ -12,7 +12,11 @@ import warnings
 
 
 def _check_folder(settings):
-    if settings.get('export_folder'):
+    selected_dir = settings.get('export_folder')
+    if selected_dir:
+        if not os.path.isdir(selected_dir):
+            raise ValueError("You have selected export directory that doesn't exist ({}). "
+                             "Please select another or create this one".format(selected_dir))
         return settings
     else:
         if not os.path.isdir('./experiments/'):
@@ -53,7 +57,7 @@ def prepare_dataset(df, target_events, event_filter=None, n_start_events=None):
         train.event_name = train.event_name.apply(lambda x: x.split())
         if target_events:
             train['target'] = train.event_name.apply(lambda x: x[-1] in target_events)
-            train.event_name = train.event_name.apply(lambda x: x[:-1])
+            train.loc[train.target, 'event_name'] = train.event_name.apply(lambda x: x[:-1])
         if n_start_events:
             train.event_name = train.event_name.apply(lambda x: ' '.join(x[:n_start_events]))
         else:
@@ -479,8 +483,8 @@ def filter_welcome(df):
     """
     Filter for truncated welcome visualization
 
-    :param df:data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
-            `event_timestamp` and `user_pseudo_id`
+    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
+    `event_timestamp` and `user_pseudo_id`
     :type df: pd.DataFrame
     :return: filtered for users events dataset
     :rtype: pd.DataFrame
@@ -503,8 +507,8 @@ def prepare_prunned(df):
     """
     Filter for truncated welcome visualization
 
-    :param df:data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
-            `event_timestamp` and `user_pseudo_id`
+    :param df: data from BQ or your own (clickstream). Should have at least three columns: `event_name`,
+    `event_timestamp` and `user_pseudo_id`
     :type df: pd.DataFrame
     :return: filtered for users events dataset
     :rtype: pd.DataFrame
