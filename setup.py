@@ -2,11 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='retentioneering',
-    version='0.2.0',
+    version='0.3.0',
+    license='Mozilla Public License',
     description='Python package for user trajectories analysis in the app',
     long_description='Python package for user trajectories analysis in the app',
     author='App in the Air',
-    url='https://github.com/appintheair/aita-ml-retentioneering-python',
+    author_email='maxim.godzi@gmail.com',
+    url='https://github.com/appintheair/retentioneering-framework',
+    keywords=['ANALYTICS', 'CLICKSTREAM', 'RETENTIONEERING', 'RETENTION', 'GRAPHS', 'TRAJECTORIES'],
     install_requires=[
         'cmake',
         'google-cloud-bigquery>=1.6.0',
@@ -25,6 +28,11 @@ setup(
         'seaborn>=0.9.0',
         'tqdm>=4.26.0',
         'jupyter>=1.0.0',
+    ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Analysts',
+        'License :: OSI Approved :: Mozilla Public License 2.0'
     ],
     packages=find_packages()
 )
