@@ -168,7 +168,11 @@
 
 
 <span class="k">def</span> <span class="nf">_check_folder</span><span class="p">(</span><span class="n">settings</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;export_folder&#39;</span><span class="p">):</span>
+    <span class="n">selected_dir</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;export_folder&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">selected_dir</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">selected_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You have selected export directory that doesn&#39;t exist (</span><span class="si">{}</span><span class="s2">). &quot;</span>
+                             <span class="s2">&quot;Please select another or create this one&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">selected_dir</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">settings</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;./experiments/&#39;</span><span class="p">):</span>

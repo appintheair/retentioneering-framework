@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='retentioneering',
-    version='0.3.0',
+    version='0.3.1',
     license='Mozilla Public License',
     description='Python package for user trajectories analysis in the app',
     long_description='Python package for user trajectories analysis in the app',
@@ -11,12 +11,11 @@ setup(
     url='https://github.com/appintheair/retentioneering-framework',
     keywords=['ANALYTICS', 'CLICKSTREAM', 'RETENTIONEERING', 'RETENTION', 'GRAPHS', 'TRAJECTORIES'],
     install_requires=[
+        'cython',
         'cmake',
         'google-cloud-bigquery>=1.6.0',
         'grandalf>=0.6',
-        'hdbscan>=0.8.19',
         'matplotlib>=2.2.3',
-        'MulticoreTSNE>=0.0.1.1',
         'networkx>=2.2',
         'numpy>=1.14.4',
         'pandas>=0.23.1',
@@ -30,9 +29,7 @@ setup(
         'jupyter>=1.0.0',
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Analysts',
-        'License :: OSI Approved :: Mozilla Public License 2.0'
+        'Development Status :: 4 - Beta'
     ],
     packages=find_packages()
 )

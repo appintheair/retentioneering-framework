@@ -210,12 +210,12 @@ without account registration.</p>
 <li><p class="first">Visualize users path in the app</p>
 </li>
 <li><p class="first">Build the classifier</p>
-<ol class="arabic simple">
+<blockquote>
+<div><ol class="arabic simple">
 <li>Classifier helps you to pick out specific users paths</li>
+<li>Classifier allows estimating the probability of the user’s leaving from the app based on his current path. One can use this information to dynamically change the content of the app to prevent that.</li>
 </ol>
-<p>2. Classifier allows estimating the probability of the user’s
-leaving from the app based on his current path. One can use this
-information to dynamically change the content of the app to prevent that.</p>
+</div></blockquote>
 </li>
 </ol>
 </li>
@@ -223,17 +223,25 @@ information to dynamically change the content of the app to prevent that.</p>
 <p><strong>Expected results</strong></p>
 <ol class="arabic simple">
 <li>You will identify the most “problematic” elements of the app</li>
+<li>You will get the classifier which will allow you to predict the user’s leaving from the app based on the current user’s behavior</li>
 </ol>
-<p>2. You will get the classifier which will allow you to predict the user’s
-leaving from the app based on the current user’s behavior</p>
 <div class="section" id="import-retentioneering-framework">
 <h3>Import retentioneering framework<a class="headerlink" href="#import-retentioneering-framework" title="Permalink to this headline">¶</a></h3>
-<p>First of all, we need to import data and set documents config with the export folder
-(you can leave it empty and the script will create a folder with current timestamp).</p>
+<p>First of all, we need to import package module</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">retentioneering</span> <span class="k">import</span> <span class="n">analysis</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>After that we shoud select the export folder in config
+(you can leave it empty and the script will create a folder with current timestamp).
+Note: if you don’t want to leave this field empty, you have to specify an existing directory,
+because the script will not create it.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;export_folder&#39;</span><span class="p">:</span> <span class="s1">&#39;./experiments/new_experiment&#39;</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
 </pre></div>
 </div>
 </div>
@@ -283,7 +291,7 @@ leaving from the app based on the current user’s behavior</p>
 </div>
 <a class="reference internal image-reference" href="../_images/desc_table_lost.png"><img alt="Probability dynamics for lost users" src="../_images/desc_table_lost.png" style="width: 1200px;" /></a>
 <p>Plot for group of users who have <strong>passed</strong> event:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">desc_loss</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_passed</span><span class="p">,</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">desc_passed</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_desc_table</span><span class="p">(</span><span class="n">df_passed</span><span class="p">,</span>
                                     <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
                                     <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">target_event_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lost&#39;</span><span class="p">,</span>
@@ -308,12 +316,12 @@ leaving from the app based on the current user’s behavior</p>
 </pre></div>
 </div>
 <p>Out:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                    event_name                      next_event  trans_count
-0  onboarding__chooseLoginType                            lost            1
-1  onboarding__chooseLoginType          onboarding_login_Type1          414
-2  onboarding__chooseLoginType          onboarding_login_Type2          159
-3  onboarding__chooseLoginType  onboarding_privacy_policyShown         2133
-4     onboarding__loginFailure                            lost            1
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                    event_name                      next_event  trans_count    ...
+0  onboarding__chooseLoginType                            lost            1    ...
+1  onboarding__chooseLoginType          onboarding_login_Type1          414    ...
+2  onboarding__chooseLoginType          onboarding_login_Type2          159    ...
+3  onboarding__chooseLoginType  onboarding_privacy_policyShown         2133    ...
+4     onboarding__loginFailure                            lost            1    ...
 </pre></div>
 </div>
 <p>Now we can see which transitions take the most time and how often people have used different transitions.</p>
@@ -322,17 +330,17 @@ leaving from the app based on the current user’s behavior</p>
 </pre></div>
 </div>
 <p>Out:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                           event_name                         next_event  trans_count
-84          onboarding_welcome_screen          onboarding_welcome_screen         5021
-85          onboarding_welcome_screen                             passed         2330
-3         onboarding__chooseLoginType     onboarding_privacy_policyShown         2133
-79          onboarding_welcome_screen        onboarding__chooseLoginType         1938
-67     onboarding_privacy_policyShown             onboarding_login_Type1         1675
-11             onboarding_login_Type1  onboarding_privacy_policyAccepted         1666
-82          onboarding_welcome_screen        onboarding_otherLogin__show         1601
-62  onboarding_privacy_policyAccepted          onboarding_welcome_screen         1189
-78          onboarding_welcome_screen                               lost         1043
-47        onboarding_otherLogin__show          onboarding_welcome_screen          876
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                           event_name                         next_event  trans_count    ...
+84          onboarding_welcome_screen          onboarding_welcome_screen         5021    ...
+85          onboarding_welcome_screen                             passed         2330    ...
+3         onboarding__chooseLoginType     onboarding_privacy_policyShown         2133    ...
+79          onboarding_welcome_screen        onboarding__chooseLoginType         1938    ...
+67     onboarding_privacy_policyShown             onboarding_login_Type1         1675    ...
+11             onboarding_login_Type1  onboarding_privacy_policyAccepted         1666    ...
+82          onboarding_welcome_screen        onboarding_otherLogin__show         1601    ...
+62  onboarding_privacy_policyAccepted          onboarding_welcome_screen         1189    ...
+78          onboarding_welcome_screen                               lost         1043    ...
+47        onboarding_otherLogin__show          onboarding_welcome_screen          876    ...
 </pre></div>
 </div>
 <p>You can see the events where users spend most of their time. It seems
@@ -347,19 +355,19 @@ You can read more about it on the`wiki &lt;<a class="reference external" href="h
 </pre></div>
 </div>
 <p>Out:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                                      onboarding_login_Type1   onboarding_privacy_policyShown
-onboarding_login_Type1                                   0.0                              0.0
-onboarding_privacy_policyShown                        1675.0                              0.0
-onboarding__loginFailure                                 0.0                              0.0
-onboarding_privacy_policyTapToPolicy                     0.0                              0.0
-onboarding_welcome_screen                                0.0                              0.0
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                                        ...   onboarding_login_Type1   onboarding_privacy_policyShown    ...
+onboarding_login_Type1                  ...                      0.0                              0.0    ...
+onboarding_privacy_policyShown          ...                   1675.0                              0.0    ...
+onboarding__loginFailure                ...                      0.0                              0.0    ...
+onboarding_privacy_policyTapToPolicy    ...                      0.0                              0.0    ...
+onboarding_welcome_screen               ...                      0.0                              0.0    ...
 </pre></div>
 </div>
 </div>
 <div class="section" id="users-clustering">
 <h3>Users clustering<a class="headerlink" href="#users-clustering" title="Permalink to this headline">¶</a></h3>
 <p>Also, we could clusterize users by the frequency of events in their path:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">countmap</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">countmap</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">calculate</span><span class="o">.</span><span class="n">calculate_frequency_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/bar.png"><img alt="Hist of frequencies" src="../_images/bar.png" style="width: 1200px;" /></a>
@@ -402,7 +410,7 @@ onboarding_welcome_screen                                0.0                    
 <h4>Model inference<a class="headerlink" href="#model-inference" title="Permalink to this headline">¶</a></h4>
 <p>We have data for new users, who are not passed or lost already.</p>
 <p>Lets load it into pandas DataFrame:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;example_datasets/test.cdv&#39;</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;example_datasets/test.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now we can predict probabilities for new users:</p>

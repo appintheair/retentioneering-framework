@@ -1,7 +1,7 @@
 from __future__ import print_function
 from datetime import datetime
 from matplotlib import pyplot as plt
-from MulticoreTSNE import MulticoreTSNE
+from sklearn.manifold import TSNE
 import numpy as np
 import os
 import pandas as pd
@@ -202,7 +202,7 @@ class Model:
 
     @staticmethod
     def _get_tsne(sample):
-        return MulticoreTSNE().fit_transform(sample.todense())
+        return TSNE().fit_transform(sample.todense())
 
     def plot_projections(self, sample=None, target=None, ids=None):
         """
